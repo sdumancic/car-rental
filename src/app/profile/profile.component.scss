@@ -1,0 +1,33 @@
+@tailwind components;
+
+@layer components {
+  // Base layout styles
+  :host {
+    @apply block min-h-screen bg-background-light;
+  }
+
+  :host-context(.dark) {
+    @apply bg-background-dark;
+  }
+
+  // Button hover effects
+  button {
+    @apply transition-all duration-200;
+  }
+
+  // Profile picture styles
+  img {
+    @apply transition-opacity duration-300;
+  }
+
+  // Card hover effects
+  .hover\:bg-gray-50 {
+    @apply transition-colors duration-200;
+  }
+
+  // Navigation icons
+  nav a {
+    @apply transition-all duration-200;
+  }
+}
+

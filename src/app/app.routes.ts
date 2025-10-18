@@ -29,6 +29,18 @@ export const routes: Routes = [
   {
     path: 'return-car',
     loadComponent: () => import('./return-car/return-car.component').then(m => m.ReturnCarComponent)
+  },
+  {
+    path: 'my-rentals',
+    loadComponent: () => import('./my-rentals/my-rentals.component').then(m => m.MyRentalsComponent)
+  },
+  {
+    path: 'rental-history',
+    loadComponent: () => import('./rental-history/rental-history.component').then(m => m.RentalHistoryComponent)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent)
   }
 ];
 
