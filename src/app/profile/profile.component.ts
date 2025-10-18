@@ -15,6 +15,18 @@ interface UserProfile {
     name: string;
     uploadDate: string;
   };
+  homeAddress: {
+    street: string;
+    houseNumber: string;
+    zipCode: string;
+    city: string;
+  };
+  billingAddress: {
+    street: string;
+    houseNumber: string;
+    zipCode: string;
+    city: string;
+  };
 }
 
 @Component({
@@ -36,6 +48,18 @@ export class ProfileComponent {
     licenseFile: {
       name: 'license_scan.pdf',
       uploadDate: '15 Mar 2024'
+    },
+    homeAddress: {
+      street: 'Lerchenauer Str.',
+      houseNumber: '12',
+      zipCode: '80809',
+      city: 'Munich'
+    },
+    billingAddress: {
+      street: 'Lerchenauer Str.',
+      houseNumber: '12',
+      zipCode: '80809',
+      city: 'Munich'
     }
   };
 
@@ -49,6 +73,12 @@ export class ProfileComponent {
 
   goBack() {
     this.router.navigate(['/search']);
+  }
+
+  onEditProfile() {
+    console.log('Edit profile clicked');
+    // Navigate to edit profile page or enable edit mode
+    // this.router.navigate(['/profile/edit']);
   }
 
   onEditProfilePicture() {
@@ -124,4 +154,3 @@ export class ProfileComponent {
     return this.isDarkModeActive();
   }
 }
-

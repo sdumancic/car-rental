@@ -10,13 +10,8 @@
         </svg>
       </button>
       <h1 class="text-lg font-bold text-center flex-1">My Profile</h1>
-      <button class="p-2 -mr-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors" (click)="toggleDarkMode()">
-        <svg *ngIf="!isDarkMode()" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-        <svg *ngIf="isDarkMode()" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
-        </svg>
+      <button class="text-primary font-semibold text-sm px-2 hover:text-primary/80 transition-colors" (click)="onEditProfile()">
+        Edit
       </button>
     </header>
 
@@ -70,6 +65,60 @@
         </div>
       </div>
 
+      <!-- Address Information Section -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold">Address Information</h3>
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-4">
+          <!-- Home Address -->
+          <div>
+            <p class="text-gray-500 dark:text-gray-400 mb-2 font-medium">Home Address</p>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Street</span>
+                <span class="font-medium">{{ userProfile.homeAddress.street }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">House Number</span>
+                <span class="font-medium">{{ userProfile.homeAddress.houseNumber }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">ZIP Code</span>
+                <span class="font-medium">{{ userProfile.homeAddress.zipCode }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">City</span>
+                <span class="font-medium">{{ userProfile.homeAddress.city }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-200 dark:border-gray-700"></div>
+
+          <!-- Billing Address -->
+          <div>
+            <p class="text-gray-500 dark:text-gray-400 mb-2 font-medium">Billing Address</p>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">Street</span>
+                <span class="font-medium">{{ userProfile.billingAddress.street }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">House Number</span>
+                <span class="font-medium">{{ userProfile.billingAddress.houseNumber }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">ZIP Code</span>
+                <span class="font-medium">{{ userProfile.billingAddress.zipCode }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-500 dark:text-gray-400">City</span>
+                <span class="font-medium">{{ userProfile.billingAddress.city }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Driver's License Section -->
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Driver's License</h3>
@@ -95,9 +144,30 @@
       <div class="space-y-4">
         <h3 class="text-lg font-semibold">Account Settings</h3>
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+          <!-- Dark Mode Toggle -->
+          <button
+            (click)="toggleDarkMode()"
+            class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors rounded-t-xl">
+            <div class="flex items-center gap-3">
+              <svg *ngIf="!isDarkMode()" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <svg *ngIf="isDarkMode()" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+              </svg>
+              <span class="font-medium">Dark Mode</span>
+            </div>
+            <div class="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full"
+                 [class.bg-primary]="isDarkMode()"
+                 [class.bg-gray-300]="!isDarkMode()">
+              <span class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ease-in-out"
+                    [class.translate-x-6]="isDarkMode()"></span>
+            </div>
+          </button>
+          <div class="border-t border-gray-200 dark:border-gray-700 mx-4"></div>
           <button
             (click)="onChangePassword()"
-            class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors rounded-t-xl">
+            class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <span class="font-medium">Change Password</span>
             <svg class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
               <path d="M181.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L164.69,128,98.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,181.66,133.66Z"></path>
