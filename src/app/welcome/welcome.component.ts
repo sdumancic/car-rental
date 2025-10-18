@@ -36,7 +36,8 @@ export class WelcomeComponent {
 
   onRegister() {
     console.log('Register clicked');
-    // Implement register logic here
+    // Navigate to register page
+    this.router.navigate(['/register']);
   }
 
   toggleDarkMode() {

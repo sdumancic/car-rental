@@ -1,0 +1,96 @@
+<!-- Main container -->
+<div class="relative flex min-h-screen w-full flex-col justify-between overflow-x-hidden">
+  <div class="flex-grow">
+    <!-- Header -->
+    <header class="flex items-center justify-between bg-zinc-50/80 p-4 backdrop-blur-sm dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800">
+      <button class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800" (click)="goBack()">
+        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+          <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+        </svg>
+      </button>
+      <h1 class="flex-1 pr-6 text-center text-lg font-bold">Sign up</h1>
+      <button class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800" (click)="toggleDarkMode()">
+        <svg *ngIf="!isDarkMode()" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+        <svg *ngIf="isDarkMode()" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main content -->
+    <main class="space-y-4 p-4">
+      <form class="space-y-4" (ngSubmit)="onSignUp()">
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.firstName"
+          name="firstName"
+          placeholder="First name"
+          type="text"
+          required
+        />
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.lastName"
+          name="lastName"
+          placeholder="Last name"
+          type="text"
+          required
+        />
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.email"
+          name="email"
+          placeholder="Email"
+          type="email"
+          required
+        />
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.phoneNumber"
+          name="phoneNumber"
+          placeholder="Phone number"
+          type="tel"
+          required
+        />
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.password"
+          name="password"
+          placeholder="Password"
+          type="password"
+          required
+        />
+        <input
+          class="w-full h-14 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="registerData.confirmPassword"
+          name="confirmPassword"
+          placeholder="Confirm password"
+          type="password"
+          required
+        />
+
+        <button
+          type="button"
+          (click)="onScanLicense()"
+          class="flex h-14 w-full items-center justify-center gap-2 rounded-lg bg-primary/20 px-4 text-sm font-bold text-primary dark:bg-primary/30">
+          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+            <path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H80a8,8,0,0,0,6.66-3.56L100.28,48h55.43l13.63,20.44A8,8,0,0,0,176,72h32a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"></path>
+          </svg>
+          <span>Scan driver's license</span>
+        </button>
+      </form>
+    </main>
+  </div>
+
+  <!-- Footer with Sign up button -->
+  <div class="p-4">
+    <button
+      (click)="onSignUp()"
+      class="h-14 w-full rounded-lg bg-primary px-5 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+      Sign up
+    </button>
+  </div>
+</div>
+

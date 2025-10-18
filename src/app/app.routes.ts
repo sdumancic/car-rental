@@ -13,6 +13,10 @@ export const routes: Routes = [
   {
     path: 'search',
     loadComponent: () => import('./car-search/car-search.component').then(m => m.CarSearchComponent)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./register/register.component').then(m => m.RegisterComponent)
   }
 ];
 
