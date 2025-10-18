@@ -1,0 +1,32 @@
+@tailwind components;
+
+@layer components {
+  // Base layout styles
+  :host {
+    @apply block min-h-screen bg-background-light;
+  }
+
+  :host-context(.dark) {
+    @apply bg-background-dark;
+  }
+
+  // Smooth transitions for image carousel
+  .bg-cover {
+    @apply transition-all duration-300;
+  }
+
+  // Input styling consistency
+  input[type="text"] {
+    @apply transition-all duration-200;
+  }
+
+  input[type="text"]:focus {
+    @apply shadow-none;
+  }
+
+  // Button hover effects
+  button {
+    @apply transition-all duration-200;
+  }
+}
+

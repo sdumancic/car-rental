@@ -1,0 +1,168 @@
+<!-- Main container -->
+<div class="flex flex-col h-screen justify-between">
+  <!-- Scrollable content area -->
+  <div class="flex-grow overflow-y-auto">
+    <!-- Header -->
+    <header class="sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm z-10 border-b border-gray-200 dark:border-gray-800">
+      <div class="flex items-center p-4">
+        <button class="p-2 -ml-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors" (click)="goBack()">
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+            <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+          </svg>
+        </button>
+        <h1 class="text-lg font-bold flex-1 text-center pr-8">Payment</h1>
+        <button class="p-2 -mr-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors" (click)="toggleDarkMode()">
+          <svg *ngIf="!isDarkMode()" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <svg *ngIf="isDarkMode()" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="p-4 space-y-6">
+      <!-- Payment Method Section -->
+      <section>
+        <h2 class="text-base font-bold mb-3">Payment Method</h2>
+        <div class="space-y-3">
+          <!-- Credit Card Option -->
+          <label
+            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            [class.border-primary]="paymentMethod === 'credit-card'"
+            [class.ring-2]="paymentMethod === 'credit-card'"
+            [class.ring-primary/20]="paymentMethod === 'credit-card'">
+            <div class="flex-grow">
+              <p class="font-medium">Credit Card</p>
+            </div>
+            <input
+              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              type="radio"
+              name="payment_method"
+              value="credit-card"
+              [(ngModel)]="paymentMethod"
+              (change)="onPaymentMethodChange('credit-card')"
+              checked
+            />
+          </label>
+
+          <!-- Debit Card Option -->
+          <label
+            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            [class.border-primary]="paymentMethod === 'debit-card'"
+            [class.ring-2]="paymentMethod === 'debit-card'"
+            [class.ring-primary/20]="paymentMethod === 'debit-card'">
+            <div class="flex-grow">
+              <p class="font-medium">Debit Card</p>
+            </div>
+            <input
+              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              type="radio"
+              name="payment_method"
+              value="debit-card"
+              [(ngModel)]="paymentMethod"
+              (change)="onPaymentMethodChange('debit-card')"
+            />
+          </label>
+
+          <!-- PayPal Option -->
+          <label
+            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            [class.border-primary]="paymentMethod === 'paypal'"
+            [class.ring-2]="paymentMethod === 'paypal'"
+            [class.ring-primary/20]="paymentMethod === 'paypal'">
+            <div class="flex-grow">
+              <p class="font-medium">Paypal</p>
+            </div>
+            <input
+              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              type="radio"
+              name="payment_method"
+              value="paypal"
+              [(ngModel)]="paymentMethod"
+              (change)="onPaymentMethodChange('paypal')"
+            />
+          </label>
+        </div>
+      </section>
+
+      <!-- Card Details Section -->
+      <section>
+        <h2 class="text-base font-bold mb-3">Card Details</h2>
+        <div class="space-y-4">
+          <input
+            class="w-full h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            [(ngModel)]="cardDetails.cardNumber"
+            placeholder="Card number"
+            type="text"
+          />
+          <div class="flex gap-4">
+            <input
+              class="w-1/2 h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              [(ngModel)]="cardDetails.expiryDate"
+              placeholder="MM/YY"
+              type="text"
+            />
+            <input
+              class="w-1/2 h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              [(ngModel)]="cardDetails.cvc"
+              placeholder="CVC"
+              type="text"
+            />
+          </div>
+          <input
+            class="w-full h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            [(ngModel)]="cardDetails.nameOnCard"
+            placeholder="Name on card"
+            type="text"
+          />
+        </div>
+      </section>
+
+      <!-- Billing Address Section -->
+      <section>
+        <h2 class="text-base font-bold mb-3">Billing Address</h2>
+        <div class="space-y-4">
+          <input
+            class="w-full h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            [(ngModel)]="billingAddress.address"
+            placeholder="Address"
+            type="text"
+          />
+          <input
+            class="w-full h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+            [(ngModel)]="billingAddress.city"
+            placeholder="City"
+            type="text"
+          />
+          <div class="flex gap-4">
+            <input
+              class="w-1/2 h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              [(ngModel)]="billingAddress.state"
+              placeholder="State"
+              type="text"
+            />
+            <input
+              class="w-1/2 h-14 px-4 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+              [(ngModel)]="billingAddress.zipCode"
+              placeholder="Zip code"
+              type="text"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer with Pay button -->
+  <footer class="p-4 bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+    <button
+      (click)="onPay()"
+      class="w-full bg-primary text-white font-bold py-4 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+      Pay ${{ totalAmount }}
+    </button>
+  </footer>
+</div>
+
