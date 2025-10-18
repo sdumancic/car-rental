@@ -2,7 +2,8 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
+import { AppStore } from '../services/app.store';
+import { ThemeService } from '../services/theme.service'
 
 @Component({
   selector: 'app-register',

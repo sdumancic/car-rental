@@ -2,7 +2,7 @@ import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
+import { AppStore } from '../services/app.store';
 
 @Component({
   selector: 'app-welcome',
@@ -17,21 +17,21 @@ export class WelcomeComponent {
     password: ''
   };
 
-  // Create a computed signal for dark mode state - exactly like car-search
-  isDarkModeActive = computed(() => this.themeService.darkMode());
+  // Inject the store
+  isDarkMode: any;
 
   constructor(
-    public themeService: ThemeService,
+    private store: AppStore,
     private router: Router
   ) {
-    console.log('WelcomeComponent initialized, dark mode:', this.themeService.darkMode());
+    this.isDarkMode = this.store.isDarkMode;
   }
 
   onLogin() {
     console.log('Login attempt:', this.loginData);
     // Implement login logic here
-    // After successful login, navigate to search
-    this.router.navigate(['/search']);
+    // After successful login, navigate to my-rentals
+    this.router.navigate(['/my-rentals']);
   }
 
   onRegister() {
@@ -41,12 +41,10 @@ export class WelcomeComponent {
   }
 
   toggleDarkMode() {
-    console.log('Toggle dark mode clicked, current:', this.themeService.darkMode());
-    this.themeService.toggleDarkMode();
-    console.log('After toggle:', this.themeService.darkMode());
+    this.store.toggleDarkMode();
   }
 
-  isDarkMode() {
-    return this.isDarkModeActive();
+  isDarkModeActive() {
+    return this.isDarkMode();
   }
 }

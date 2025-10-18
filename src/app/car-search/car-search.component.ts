@@ -1,44 +1,32 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
-
-interface Car {
-  seats: number;
-  bags: number;
-  type: string;
-  model: string;
-  price: number;
-  imageUrl?: string;
-}
+import { AppStore, Car, SearchCriteria } from '../services/app.store';
+import { FooterNavComponent } from '../footer-nav/footer-nav.component';
 
 @Component({
   selector: 'app-car-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, FooterNavComponent],
   templateUrl: './car-search.component.html',
   styleUrls: ['./car-search.component.scss']
 })
 export class CarSearchComponent {
-  activeTab = signal<string>('search');
-  activeFilter = signal<string | null>(null);
-  cars = signal<Car[]>([
-    { seats: 4, bags: 2, type: 'Economy', model: 'Nissan Versa or similar', price: 45 },
-    { seats: 5, bags: 3, type: 'Compact', model: 'Toyota Corolla or similar', price: 55 },
-    { seats: 5, bags: 4, type: 'Midsize', model: 'Honda Accord or similar', price: 65 }
-  ]);
+  // Inject the store
+  activeTab: Signal<string>;
+  activeFilter: Signal<string | null>;
+  cars: Signal<Car[]>;
+  searchCriteria: Signal<SearchCriteria>;
+  isDarkMode: Signal<boolean>;
 
-  searchCriteria = {
-    location: '',
-    startDate: '',
-    endDate: ''
-  };
-
-  // Create a computed signal for dark mode state
-  isDarkModeActive = computed(() => this.themeService.darkMode());
-
-  constructor(public themeService: ThemeService) {}
+  constructor(private store: AppStore) {
+    this.activeTab = this.store.activeTab;
+    this.activeFilter = this.store.activeFilter;
+    this.cars = this.store.cars;
+    this.searchCriteria = this.store.searchCriteria;
+    this.isDarkMode = this.store.isDarkMode;
+  }
 
   getActiveTab() {
     return this.activeTab();
@@ -53,14 +41,14 @@ export class CarSearchComponent {
   }
 
   setActiveTab(tab: string) {
-    this.activeTab.set(tab);
+    this.store.setActiveTab(tab);
   }
 
   toggleFilter(filter: string) {
     if (this.activeFilter() === filter) {
-      this.activeFilter.set(null);
+      this.store.setActiveFilter(null);
     } else {
-      this.activeFilter.set(filter);
+      this.store.setActiveFilter(filter);
     }
   }
 
@@ -74,10 +62,31 @@ export class CarSearchComponent {
   }
 
   toggleDarkMode() {
-    this.themeService.toggleDarkMode();
+    this.store.toggleDarkMode();
   }
 
-  isDarkMode() {
-    return this.isDarkModeActive();
+  // Getters and setters for two-way binding with ngModel
+  get location(): string {
+    return this.searchCriteria().location;
+  }
+
+  set location(value: string) {
+    this.store.updateSearchCriteria({ location: value });
+  }
+
+  get startDate(): string {
+    return this.searchCriteria().startDate;
+  }
+
+  set startDate(value: string) {
+    this.store.updateSearchCriteria({ startDate: value });
+  }
+
+  get endDate(): string {
+    return this.searchCriteria().endDate;
+  }
+
+  set endDate(value: string) {
+    this.store.updateSearchCriteria({ endDate: value });
   }
 }

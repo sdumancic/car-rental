@@ -1,8 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
+import { AppStore } from '../services/app.store';
 
 @Component({
   selector: 'app-payment',
@@ -12,62 +12,63 @@ import { ThemeService } from '../services/theme.service';
   styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent {
-  // Payment method selection
-  paymentMethod = 'credit-card';
-
-  // Card details
-  cardDetails = {
-    cardNumber: '',
-    expiryDate: '',
-    cvc: '',
-    nameOnCard: ''
-  };
-
-  // Billing address
-  billingAddress = {
-    address: '',
-    city: '',
-    state: '',
-    zipCode: ''
-  };
-
-  // Total amount (this would come from route params or service in real app)
-  totalAmount = 250;
-
-  // Create a computed signal for dark mode state
-  isDarkModeActive = computed(() => this.themeService.darkMode());
+  // Inject the store
+  paymentData: any;
+  isDarkMode: any;
 
   constructor(
-    public themeService: ThemeService,
+    private store: AppStore,
     private router: Router
-  ) {}
+  ) {
+    this.paymentData = this.store.paymentData;
+    this.isDarkMode = this.store.isDarkMode;
+  }
 
   goBack() {
     this.router.navigate(['/reservation-details']);
   }
 
   onPaymentMethodChange(method: string) {
-    this.paymentMethod = method;
+    this.store.updatePaymentMethod(method);
     console.log('Payment method changed to:', method);
   }
 
-  onPay() {
+  onCardDetailsChange(details: any) {
+    this.store.updateCardDetails(details);
+  }
+
+  onBillingAddressChange(address: any) {
+    this.store.updateBillingAddress(address);
+  }
+
+  updateCardNumber(value: string) {
+    this.store.updateCardDetails({ cardNumber: value });
+  }
+
+  updateExpiryDate(value: string) {
+    this.store.updateCardDetails({ expiryDate: value });
+  }
+
+  updateCvc(value: string) {
+    this.store.updateCardDetails({ cvc: value });
+  }
+
+  updateNameOnCard(value: string) {
+    this.store.updateCardDetails({ nameOnCard: value });
+  }
+
+  updateBillingAddressField(field: string, value: string) {
+    const update = { [field]: value };
+    this.store.updateBillingAddress(update);
+  }
+
+  onSubmit() {
     console.log('Processing payment...');
-    console.log('Payment method:', this.paymentMethod);
-    console.log('Card details:', this.cardDetails);
-    console.log('Billing address:', this.billingAddress);
-    console.log('Amount:', this.totalAmount);
-    // Implement payment logic here
-    // After successful payment, navigate to confirmation
-    // this.router.navigate(['/confirmation']);
+    // Implement payment processing logic
+    // this.paymentService.processPayment(this.paymentData());
   }
 
   toggleDarkMode() {
-    this.themeService.toggleDarkMode();
-  }
-
-  isDarkMode() {
-    return this.isDarkModeActive();
+    this.store.toggleDarkMode();
   }
 }
-

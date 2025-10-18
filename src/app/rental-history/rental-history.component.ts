@@ -2,7 +2,9 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ThemeService } from '../services/theme.service';
+import { AppStore } from '../services/app.store';
+import { ThemeService } from '../services/theme.service'
+import { FooterNavComponent } from '../footer-nav/footer-nav.component'
 
 interface PastRental {
   id: number;
@@ -17,7 +19,7 @@ interface PastRental {
 @Component({
   selector: 'app-rental-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FooterNavComponent],
   templateUrl: './rental-history.component.html',
   styleUrls: ['./rental-history.component.scss']
 })

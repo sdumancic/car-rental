@@ -21,13 +21,14 @@
 
     <!-- Main content -->
     <main class="p-4">
+      <!-- ...existing main content... -->
       <h2 class="text-3xl font-bold">Find your perfect ride</h2>
       <form class="mt-6 space-y-4" (ngSubmit)="onSearch()">
         <!-- Location input -->
         <div>
           <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="pickup">Pick up location</label>
           <div class="relative mt-2">
-            <input class="form-input" id="pickup" [(ngModel)]="searchCriteria.location" name="location" type="text" placeholder="Enter a location" />
+            <input class="form-input" id="pickup" [(ngModel)]="location" name="location" type="text" placeholder="Enter a location" />
             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -36,28 +37,26 @@
             </span>
           </div>
         </div>
-
+        <!-- ...other form fields and sections... -->
         <!-- Date selection grid -->
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="start-date">Reservation starts</label>
             <div class="relative mt-2">
-              <input class="form-input" id="start-date" [(ngModel)]="searchCriteria.startDate" name="startDate" type="date" />
+              <input class="form-input" id="start-date" [(ngModel)]="startDate" name="startDate" type="date" />
             </div>
           </div>
           <div>
             <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="end-date">Reservation ends</label>
             <div class="relative mt-2">
-              <input class="form-input" id="end-date" [(ngModel)]="searchCriteria.endDate" name="endDate" type="date" />
+              <input class="form-input" id="end-date" [(ngModel)]="endDate" name="endDate" type="date" />
             </div>
           </div>
         </div>
-
         <button type="submit" class="w-full rounded-xl bg-primary py-3.5 text-base font-bold text-white shadow-lg shadow-primary/30">
           Search
         </button>
       </form>
-
       <!-- Filters -->
       <section class="mt-8">
         <h3 class="text-lg font-bold">Filters</h3>
@@ -76,7 +75,6 @@
           </button>
         </div>
       </section>
-
       <!-- Car listings -->
       <section class="mt-6 space-y-4">
         <div *ngFor="let car of getCars()"
@@ -94,30 +92,6 @@
     </main>
   </div>
 
-  <!-- Footer navigation -->
-  <footer class="sticky bottom-0 border-t border-zinc-200 bg-white/80 pb-3 pt-2 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/80">
-    <nav class="flex justify-around px-4">
-      <a *ngFor="let item of [
-           {name: 'Search', icon: 'search'},
-           {name: 'Rentals', icon: 'car'},
-           {name: 'Profile', icon: 'user'}
-         ]"
-         class="flex flex-1 flex-col items-center justify-end gap-1"
-         [ngClass]="{
-           'text-primary': getActiveTab() === item.name.toLowerCase(),
-           'text-zinc-500': getActiveTab() !== item.name.toLowerCase()
-         }"
-         [routerLink]="['/' + item.name.toLowerCase()]"
-         (click)="setActiveTab(item.name.toLowerCase())">
-        <span class="flex h-8 items-center justify-center">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path *ngIf="item.icon === 'search'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            <path *ngIf="item.icon === 'car'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
-            <path *ngIf="item.icon === 'user'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </span>
-        <span class="text-xs" [class.font-bold]="getActiveTab() === item.name.toLowerCase()">{{item.name}}</span>
-      </a>
-    </nav>
-  </footer>
+  <app-footer-nav></app-footer-nav>
 </div>
+

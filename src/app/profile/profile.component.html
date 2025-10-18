@@ -21,9 +21,9 @@
       <div class="flex flex-col items-center space-y-4">
         <div class="relative">
           <img
-            [alt]="userProfile.firstName + ' ' + userProfile.lastName"
+            [alt]="userProfile().firstName + ' ' + userProfile().lastName"
             class="w-24 h-24 rounded-full object-cover border-4 border-gray-200 dark:border-gray-700"
-            [src]="userProfile.profilePicture"
+            [src]="userProfile().profilePicture"
           />
           <button
             (click)="onEditProfilePicture()"
@@ -34,8 +34,8 @@
           </button>
         </div>
         <div class="text-center">
-          <h2 class="text-xl font-bold">{{ userProfile.firstName }} {{ userProfile.lastName }}</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Member since {{ userProfile.memberSince }}</p>
+          <h2 class="text-xl font-bold">{{ userProfile().firstName }} {{ userProfile().lastName }}</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Member since {{ userProfile().memberSince }}</p>
         </div>
       </div>
 
@@ -45,22 +45,22 @@
         <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-4">
           <div class="flex justify-between items-center">
             <span class="text-gray-500 dark:text-gray-400">First Name</span>
-            <span class="font-medium">{{ userProfile.firstName }}</span>
+            <span class="font-medium">{{ userProfile().firstName }}</span>
           </div>
           <div class="border-t border-gray-200 dark:border-gray-700"></div>
           <div class="flex justify-between items-center">
             <span class="text-gray-500 dark:text-gray-400">Last Name</span>
-            <span class="font-medium">{{ userProfile.lastName }}</span>
+            <span class="font-medium">{{ userProfile().lastName }}</span>
           </div>
           <div class="border-t border-gray-200 dark:border-gray-700"></div>
           <div class="flex justify-between items-center">
             <span class="text-gray-500 dark:text-gray-400">Email</span>
-            <span class="font-medium">{{ userProfile.email }}</span>
+            <span class="font-medium">{{ userProfile().email }}</span>
           </div>
           <div class="border-t border-gray-200 dark:border-gray-700"></div>
           <div class="flex justify-between items-center">
             <span class="text-gray-500 dark:text-gray-400">Phone Number</span>
-            <span class="font-medium">{{ userProfile.phoneNumber }}</span>
+            <span class="font-medium">{{ userProfile().phoneNumber }}</span>
           </div>
         </div>
       </div>
@@ -75,19 +75,19 @@
             <div class="space-y-2">
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">Street</span>
-                <span class="font-medium">{{ userProfile.homeAddress.street }}</span>
+                <span class="font-medium">{{ userProfile().homeAddress.street }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">House Number</span>
-                <span class="font-medium">{{ userProfile.homeAddress.houseNumber }}</span>
+                <span class="font-medium">{{ userProfile().homeAddress.houseNumber }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">ZIP Code</span>
-                <span class="font-medium">{{ userProfile.homeAddress.zipCode }}</span>
+                <span class="font-medium">{{ userProfile().homeAddress.zipCode }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">City</span>
-                <span class="font-medium">{{ userProfile.homeAddress.city }}</span>
+                <span class="font-medium">{{ userProfile().homeAddress.city }}</span>
               </div>
             </div>
           </div>
@@ -100,19 +100,19 @@
             <div class="space-y-2">
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">Street</span>
-                <span class="font-medium">{{ userProfile.billingAddress.street }}</span>
+                <span class="font-medium">{{ userProfile().billingAddress.street }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">House Number</span>
-                <span class="font-medium">{{ userProfile.billingAddress.houseNumber }}</span>
+                <span class="font-medium">{{ userProfile().billingAddress.houseNumber }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">ZIP Code</span>
-                <span class="font-medium">{{ userProfile.billingAddress.zipCode }}</span>
+                <span class="font-medium">{{ userProfile().billingAddress.zipCode }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-500 dark:text-gray-400">City</span>
-                <span class="font-medium">{{ userProfile.billingAddress.city }}</span>
+                <span class="font-medium">{{ userProfile().billingAddress.city }}</span>
               </div>
             </div>
           </div>
@@ -128,8 +128,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
             </svg>
             <div>
-              <p class="font-medium">{{ userProfile.licenseFile.name }}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Uploaded on {{ userProfile.licenseFile.uploadDate }}</p>
+              <p class="font-medium">{{ userProfile().licenseFile.name }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Uploaded on {{ userProfile().licenseFile.uploadDate }}</p>
             </div>
           </div>
           <button
@@ -196,36 +196,6 @@
     </main>
   </div>
 
-  <!-- Footer with bottom navigation -->
-  <div class="sticky bottom-0 bg-background-light dark:bg-background-dark">
-    <!-- Bottom navigation -->
-    <nav class="flex justify-around items-center border-t border-gray-200 dark:border-gray-800 py-2">
-      <a
-        (click)="navigateToSearch()"
-        class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-primary transition-colors">
-        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
-        </svg>
-        <span class="text-xs font-medium">Search</span>
-      </a>
-      <a
-        (click)="navigateToRentals()"
-        class="flex flex-col items-center gap-1 text-gray-500 dark:text-gray-400 cursor-pointer hover:text-primary transition-colors">
-        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M240,112H229.2L201.42,49.5A16,16,0,0,0,186.8,40H69.2a16,16,0,0,0-14.62,9.5L26.8,112H16a8,8,0,0,0,0,16h8v80a16,16,0,0,0,16,16H64a16,16,0,0,0,16-16V192h96v16a16,16,0,0,0,16,16h24a16,16,0,0,0,16-16V128h8a8,8,0,0,0,0-16ZM80,160H64a8,8,0,0,1,0-16H80a8,8,0,0,1,0,16Zm96,0a8,8,0,0,1,0-16h16a8,8,0,0,1,0,16Z"></path>
-        </svg>
-        <span class="text-xs font-medium">Rentals</span>
-      </a>
-      <a
-        (click)="navigateToProfile()"
-        class="flex flex-col items-center gap-1 text-primary cursor-pointer">
-        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"></path>
-        </svg>
-        <span class="text-xs font-medium">Profile</span>
-      </a>
-    </nav>
-    <div class="h-5 bg-background-light dark:bg-background-dark"></div>
-  </div>
+  <app-footer-nav></app-footer-nav>
 </div>
 
