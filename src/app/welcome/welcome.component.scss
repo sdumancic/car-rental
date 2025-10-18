@@ -1,0 +1,29 @@
+@tailwind components;
+
+@layer components {
+  // Base layout styles
+  :host {
+    @apply block min-h-screen overflow-hidden;
+  }
+
+  // Custom form input styling
+  input[type="email"],
+  input[type="password"] {
+    @apply transition-all duration-200;
+  }
+
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    @apply shadow-none;
+  }
+
+  // Button hover effects
+  button {
+    @apply transition-all duration-200;
+  }
+
+  // Background image overlay
+  .absolute.inset-0 {
+    @apply pointer-events-none;
+  }
+}

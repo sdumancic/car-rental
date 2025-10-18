@@ -4,7 +4,8 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class ThemeService {
-  private darkMode = signal<boolean>(this.isDarkModePreferred());
+  // Make darkMode public so components can track it
+  darkMode = signal<boolean>(this.isDarkModePreferred());
 
   constructor() {
     // Initialize theme based on user preference or stored value
@@ -29,6 +30,7 @@ export class ThemeService {
     window.matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (e) => {
         if (localStorage.getItem('darkMode') === null) {
+          this.darkMode.set(e.matches);
           this.updateTheme(e.matches);
         }
       });

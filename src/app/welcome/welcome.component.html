@@ -1,0 +1,67 @@
+<div class="relative h-screen w-full flex flex-col justify-between bg-background-light dark:bg-background-dark text-zinc-900 dark:text-white">
+  <!-- Background image -->
+  <div class="absolute inset-0 z-0">
+    <img
+      alt="Background car image"
+      class="w-full h-full object-cover opacity-30"
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2p3iuUZaa6O4HR-Rjuzgb-RF3r9uBn-3vN4-j9wlGdL1wLeVXS43SQFm-tZ6XMtn5Ahn1eVWeApgulAsu5bmh_51L2sOCWLj72nHol4GNDamvU_jOXdRJmtTI-s_LAlHLPxoE1u63AR2ObpR5FasWfx1SGXigvY96G_ZydxiZV9gzgm1qTZWSrW9Qrd5I3I-nhH89a3SieQLG8iqe07EReKX3tO4C0TdqRLB8u4HjBHGFdHhdWNPny-iQWRj-WnncdJLghEF4Oq1A"
+    />
+  </div>
+
+  <!-- Theme toggle button -->
+  <div class="absolute top-4 right-4 z-50">
+    <button
+      class="flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm shadow-md hover:bg-white/30 transition-colors"
+      (click)="toggleDarkMode()">
+      <svg *ngIf="!isDarkMode()" class="h-5 w-5 text-zinc-900 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+      <svg *ngIf="isDarkMode()" class="h-5 w-5 text-zinc-900 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div class="relative z-10 flex flex-col justify-end h-full p-6">
+    <!-- Title section -->
+    <div class="text-center mb-10">
+      <h1 class="text-3xl font-bold text-zinc-900 dark:text-white mb-2">Rent Fast, Live More.</h1>
+      <p class="text-lg text-zinc-600 dark:text-gray-300">Your quickest path to the open road.</p>
+    </div>
+
+    <!-- Login form -->
+    <div class="w-full bg-white/90 dark:bg-background-dark/80 rounded-xl p-6 flex flex-col items-center shadow-lg backdrop-blur-sm">
+      <form class="w-full space-y-4" (ngSubmit)="onLogin()">
+        <input
+          class="w-full h-12 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="loginData.email"
+          name="email"
+          placeholder="Email"
+          type="email"
+          required
+        />
+        <input
+          class="w-full h-12 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          [(ngModel)]="loginData.password"
+          name="password"
+          placeholder="Password"
+          type="password"
+          required
+        />
+        <button
+          type="submit"
+          class="w-full h-12 px-5 bg-primary text-white text-base font-bold rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors mt-6">
+          <span>Login</span>
+        </button>
+      </form>
+      <button
+        type="button"
+        (click)="onRegister()"
+        class="w-full h-12 px-5 bg-zinc-500 dark:bg-zinc-600 text-white text-base font-bold rounded-lg flex items-center justify-center shadow-lg mt-4 hover:bg-zinc-400 dark:hover:bg-zinc-500 transition-colors">
+        <span>Register</span>
+      </button>
+    </div>
+  </div>
+</div>
+
