@@ -14,13 +14,13 @@ interface Vehicle {
 }
 
 @Component({
-  selector: 'app-car-administration',
+  selector: 'app-admin-car-overview',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './car-administration.html',
-  styleUrls: ['./car-administration.scss']
+  templateUrl: './admin-car-overview.html',
+  styleUrls: ['./admin-car-overview.scss']
 })
-export class CarAdministrationComponent {
+export class AdminCarOverviewComponent {
   // Search query
   searchQuery = signal('');
 
@@ -95,12 +95,14 @@ export class CarAdministrationComponent {
 
   onAddVehicle() {
     console.log('Add new vehicle clicked');
-    // Implement add vehicle logic
+    // Navigate to create car page
+    this.router.navigate(['/admin-create-car']);
   }
 
   onEditVehicle(vehicle: Vehicle) {
     console.log('Edit vehicle:', vehicle);
-    // Implement edit vehicle logic
+    // Navigate to car details page
+    this.router.navigate(['/admin-car-details']);
   }
 
   onDeleteVehicle(vehicle: Vehicle) {
