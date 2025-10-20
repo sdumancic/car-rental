@@ -102,11 +102,36 @@ export class AppStore {
 
   // Cars state
   private _cars = signal<Car[]>([
-    { seats: 4, bags: 2, type: 'Economy', model: 'Nissan Versa or similar', price: 45 },
-    { seats: 5, bags: 3, type: 'Compact', model: 'Toyota Corolla or similar', price: 55 },
-    { seats: 5, bags: 4, type: 'Midsize', model: 'Honda Accord or similar', price: 65 }
+    {
+      seats: 4,
+      bags: 2,
+      type: 'Economy',
+      model: 'Nissan Versa or similar',
+      price: 45,
+      imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop'
+    },
+    {
+      seats: 5,
+      bags: 3,
+      type: 'Compact',
+      model: 'Toyota Corolla or similar',
+      price: 55,
+      imageUrl: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=400&h=300&fit=crop'
+    },
+    {
+      seats: 5,
+      bags: 4,
+      type: 'Midsize',
+      model: 'Honda Accord or similar',
+      price: 65,
+      imageUrl: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop'
+    }
   ]);
   cars = this._cars.asReadonly();
+
+  // Selected car state
+  private _selectedCar = signal<Car | null>(null);
+  selectedCar = this._selectedCar.asReadonly();
 
   // Active rental state
   private _activeRental = signal<Rental | null>({
@@ -209,6 +234,11 @@ export class AppStore {
   // Cars methods
   updateCars(cars: Car[]): void {
     this._cars.set(cars);
+  }
+
+  // Selected car methods
+  setSelectedCar(car: Car): void {
+    this._selectedCar.set(car);
   }
 
   // Active rental methods

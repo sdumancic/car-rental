@@ -1,5 +1,5 @@
 import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStore } from '../services/app.store';
@@ -30,11 +30,12 @@ export class ReturnCarComponent {
 
   constructor(
     public themeService: ThemeService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   goBack() {
-    this.router.navigate(['/search']);
+    this.location.back();
   }
 
   onAddPhoto(position: 'front' | 'back' | 'leftSide' | 'rightSide' | 'mileage') {

@@ -79,14 +79,50 @@
       <section class="mt-6 space-y-4">
         <div *ngFor="let car of getCars()"
              class="rounded-xl bg-white p-4 shadow-sm dark:bg-zinc-800/50">
-          <div class="flex items-start gap-4">
-            <div class="flex-1">
-              <p class="text-sm text-zinc-500 dark:text-zinc-400">{{car.seats}} seats · {{car.bags}} bags</p>
-              <p class="mt-0.5 text-lg font-bold text-zinc-900 dark:text-white">{{car.type}}</p>
-              <p class="text-sm text-zinc-500 dark:text-zinc-400">{{car.model}}</p>
-              <p class="mt-3 text-lg font-bold text-zinc-900 dark:text-white">${{car.price}}<span class="text-sm font-normal text-zinc-500 dark:text-zinc-400">/day</span></p>
+          <div
+            class="flex items-start gap-5 rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-md shadow-black/10 transition hover:shadow-lg hover:shadow-black/20"
+          >
+            <!-- Car image -->
+            <div class="flex-shrink-0">
+              <img
+                [src]="car.imageUrl"
+                [alt]="car.type"
+                class="h-24 w-36 rounded-xl object-cover ring-1 ring-zinc-200 dark:ring-zinc-800"
+              />
+            </div>
+
+            <!-- Car details -->
+            <div class="flex flex-1 flex-col justify-between">
+              <div>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                  {{ car.seats }} seats · {{ car.bags }} bags
+                </p>
+                <p class="mt-1 text-xl font-semibold text-zinc-900 dark:text-white">
+                  {{ car.type }}
+                </p>
+                <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                  {{ car.model }}
+                </p>
+              </div>
+
+              <div class="mt-3 flex items-center justify-between">
+                <p class="text-2xl font-bold text-zinc-900 dark:text-white">
+                  ${{ car.price }}
+                  <span class="text-sm font-normal text-zinc-500 dark:text-zinc-400"
+                  >/day</span
+                  >
+                </p>
+
+                <button
+                  (click)="selectCar(car)"
+                  class="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/30 hover:bg-primary/90 active:scale-95 transition-all"
+                >
+                  Select Car
+                </button>
+              </div>
             </div>
           </div>
+
         </div>
       </section>
     </main>

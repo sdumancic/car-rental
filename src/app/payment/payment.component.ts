@@ -1,5 +1,5 @@
-import { Component, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, signal } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStore } from '../services/app.store';
@@ -16,16 +16,21 @@ export class PaymentComponent {
   paymentData: any;
   isDarkMode: any;
 
+  // Payment processing state
+  isProcessing = signal(false);
+  paymentSuccess = signal(false);
+
   constructor(
     private store: AppStore,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.paymentData = this.store.paymentData;
     this.isDarkMode = this.store.isDarkMode;
   }
 
   goBack() {
-    this.router.navigate(['/reservation-details']);
+    this.location.back();
   }
 
   onPaymentMethodChange(method: string) {
@@ -64,8 +69,20 @@ export class PaymentComponent {
 
   onSubmit() {
     console.log('Processing payment...');
-    // Implement payment processing logic
-    // this.paymentService.processPayment(this.paymentData());
+
+    // Start processing
+    this.isProcessing.set(true);
+
+    // After 3 seconds, show success message
+    setTimeout(() => {
+      this.isProcessing.set(false);
+      this.paymentSuccess.set(true);
+
+      // After additional 2 seconds, redirect to my-rentals
+      setTimeout(() => {
+        this.router.navigate(['/my-rentals']);
+      }, 2000);
+    }, 3000);
   }
 
   toggleDarkMode() {

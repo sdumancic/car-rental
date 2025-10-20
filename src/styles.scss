@@ -5,6 +5,7 @@
 
 /* Font import */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0');
 
 @layer base {
   :root {
@@ -44,3 +45,20 @@
     }
   }
 }
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif !important;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24 !important;
+  font-style: normal;
+  font-weight: normal;
+  font-size: inherit;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+

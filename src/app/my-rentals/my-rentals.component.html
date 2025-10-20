@@ -43,12 +43,20 @@
                 <p class="text-gray-500 dark:text-gray-400">{{ activeRental().returnLocation }}</p>
               </div>
             </div>
-            <!-- View Details Button -->
-            <button
-              (click)="onViewDetails()"
-              class="w-full mt-4 bg-primary text-white font-bold h-12 rounded-xl hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
-              View Details
-            </button>
+
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <button class="w-full bg-primary text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2"
+                      (click)="onReturnCar()">
+                <span class="material-symbols-outlined text-xl">directions_car</span>
+                <span>Return Car</span>
+              </button>
+              <button class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark text-foreground-light dark:text-foreground-dark font-bold h-12 rounded-xl flex items-center justify-center gap-2"
+                      (click)="onViewDetails()">
+                <span class="material-symbols-outlined text-xl">receipt_long</span>
+                <span>Details</span>
+              </button>
+            </div>
+
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { Component, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AppStore, Car, SearchCriteria } from '../services/app.store';
 import { FooterNavComponent } from '../footer-nav/footer-nav.component';
 
@@ -20,7 +20,7 @@ export class CarSearchComponent {
   searchCriteria: Signal<SearchCriteria>;
   isDarkMode: Signal<boolean>;
 
-  constructor(private store: AppStore) {
+  constructor(private store: AppStore, private router: Router) {
     this.activeTab = this.store.activeTab;
     this.activeFilter = this.store.activeFilter;
     this.cars = this.store.cars;
@@ -88,5 +88,13 @@ export class CarSearchComponent {
 
   set endDate(value: string) {
     this.store.updateSearchCriteria({ endDate: value });
+  }
+
+  selectCar(car: Car) {
+    console.log('Selected car:', car);
+    // Možete ovdje dodati logiku za odabir vozila
+    // Na primjer: spremiti odabrano vozilo u store ili navigirati na stranicu rezervacije
+    this.store.setSelectedCar(car);
+    this.router.navigate(['/reservation-details']);
   }
 }

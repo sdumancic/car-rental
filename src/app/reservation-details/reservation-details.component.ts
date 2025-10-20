@@ -1,8 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppStore } from '../services/app.store';
 import { ThemeService } from '../services/theme.service'
 
 @Component({
@@ -29,16 +28,36 @@ export class ReservationDetailsComponent {
   // Current image index for carousel
   currentImageIndex = signal(0);
 
-  // Reservation details
-  reservationData = {
-    startDate: '',
-    endDate: '',
-    rentalDays: 3
-  };
+  // Reservation details using signals
+  startDate = signal('');
+  endDate = signal('');
 
-  // Cost breakdown
+  // Computed signal to check if both dates are selected
+  areDatesSelected = computed(() => {
+    return this.startDate() !== '' && this.endDate() !== '';
+  });
+
+  // Computed signal to calculate rental days
+  rentalDays = computed(() => {
+    if (!this.areDatesSelected()) {
+      return 0;
+    }
+
+    const start = new Date(this.startDate());
+    const end = new Date(this.endDate());
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays > 0 ? diffDays : 0;
+  });
+
+  // Cost breakdown - only calculate if dates are selected
   costBreakdown = computed(() => {
-    const days = this.reservationData.rentalDays;
+    if (!this.areDatesSelected()) {
+      return { days: 0, subtotal: 0, taxesAndFees: 0, total: 0 };
+    }
+
+    const days = this.rentalDays();
     const subtotal = days * this.carDetails.pricePerDay;
     const taxesAndFees = 25.00;
     const total = subtotal + taxesAndFees;
@@ -56,17 +75,27 @@ export class ReservationDetailsComponent {
 
   constructor(
     public themeService: ThemeService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   goBack() {
-    this.router.navigate(['/search']);
+    this.location.back();
   }
 
   onReserve() {
+    if (!this.areDatesSelected()) {
+      alert('Please select both start and end dates');
+      return;
+    }
+
     console.log('Reserving car:', this.carDetails);
-    console.log('Reservation data:', this.reservationData);
-    // Implement reservation logic here
+    console.log('Start date:', this.startDate());
+    console.log('End date:', this.endDate());
+    console.log('Days:', this.rentalDays());
+
+    // Navigate to payment page
+    this.router.navigate(['/payment']);
   }
 
   selectImage(index: number) {
@@ -81,4 +110,3 @@ export class ReservationDetailsComponent {
     return this.isDarkModeActive();
   }
 }
-

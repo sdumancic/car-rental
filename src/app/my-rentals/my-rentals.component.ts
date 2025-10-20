@@ -31,6 +31,12 @@ export class MyRentalsComponent {
     this.router.navigate(['/reservation-details']);
   }
 
+  onReturnCar() {
+    console.log('Returning car...');
+    // Navigate to return car page
+    this.router.navigate(['/return-car']);
+  }
+
   onViewHistory() {
     console.log('Viewing rental history...');
     // Navigate to rental history page
