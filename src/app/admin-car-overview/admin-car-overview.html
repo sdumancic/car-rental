@@ -12,64 +12,91 @@
     </button>
   </header>
 
-  <!-- Search bar -->
-  <div class="px-4 py-3">
-    <label class="flex flex-col min-w-40 h-12 w-full">
-      <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
-        <div class="text-gray-500 dark:text-gray-400 flex border-none bg-zinc-100 dark:bg-zinc-700 items-center justify-center pl-4 rounded-l-lg">
-          <span class="material-symbols-outlined">search</span>
-        </div>
-        <input
-          [(ngModel)]="searchQuery"
-          class="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-zinc-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary border-none bg-zinc-100 dark:bg-zinc-700 h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 rounded-l-none pl-2 text-base font-normal leading-normal"
-          placeholder="Search by make, model, year..."
-          type="text"
-        />
-      </div>
-    </label>
-  </div>
-
   <!-- Filter buttons -->
   <div class="flex gap-3 p-3 flex-wrap">
-    <button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 pl-4 pr-2 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">Make</p>
-      <span class="material-symbols-outlined text-zinc-900 dark:text-white">expand_more</span>
-    </button>
-    <button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 pl-4 pr-2 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">Model</p>
-      <span class="material-symbols-outlined text-zinc-900 dark:text-white">expand_more</span>
-    </button>
+    <!-- Make Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedMake()"
+      (ngModelChange)="onMakeChange($event)"
+    >
+      <option value="" disabled>Make</option>
+      <option *ngFor="let make of makes()" [value]="make">{{ make }}</option>
+    </select>
+    <!-- Model Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedModel()"
+      (ngModelChange)="onModelChange($event)"
+      [disabled]="!selectedMake() || !models().length"
+    >
+      <option value="" disabled>Model</option>
+      <option *ngFor="let model of models()" [value]="model">{{ model }}</option>
+    </select>
+    <!-- Year input -->
     <input
       type="number"
       placeholder="Year"
       class="h-8 w-24 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedYear()"
+      (ngModelChange)="onYearChange($event)"
     />
-    <button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 pl-4 pr-2 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">Vehicle Type</p>
-      <span class="material-symbols-outlined text-zinc-900 dark:text-white">expand_more</span>
-    </button>
+    <!-- Vehicle Type Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedVehicleType()"
+      (ngModelChange)="onVehicleTypeChange($event)"
+    >
+      <option value="" disabled>Vehicle Type</option>
+      <option *ngFor="let type of vehicleTypes()" [value]="type">{{ type }}</option>
+    </select>
+    <!-- Passengers input -->
     <input
       type="number"
       placeholder="Passengers"
       min="1"
       max="20"
       class="h-8 w-32 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedPassengers()"
+      (ngModelChange)="onPassengersChange($event)"
     />
+    <!-- Doors input -->
     <input
       type="number"
       placeholder="Doors"
       min="2"
       max="5"
       class="h-8 w-24 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedDoors()"
+      (ngModelChange)="onDoorsChange($event)"
     />
-    <button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 pl-4 pr-2 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">Fuel Type</p>
-      <span class="material-symbols-outlined text-zinc-900 dark:text-white">expand_more</span>
-    </button>
-    <button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 pl-4 pr-2 hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal">Transmission</p>
-      <span class="material-symbols-outlined text-zinc-900 dark:text-white">expand_more</span>
-    </button>
+    <!-- Fuel Type Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedFuelType()"
+      (ngModelChange)="onFuelTypeChange($event)"
+    >
+      <option value="" disabled>Fuel Type</option>
+      <option *ngFor="let fuel of fuelTypes()" [value]="fuel">{{ fuel }}</option>
+    </select>
+    <!-- Transmission Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedTransmission()"
+      (ngModelChange)="onTransmissionChange($event)"
+    >
+      <option value="" disabled>Transmission</option>
+      <option *ngFor="let trans of transmissionTypes()" [value]="trans">{{ trans }}</option>
+    </select>
+    <!-- Status Dropdown -->
+    <select
+      class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 px-4 text-zinc-900 dark:text-white text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-primary"
+      [ngModel]="selectedStatus()"
+      (ngModelChange)="onStatusChange($event)"
+    >
+      <option value="" disabled>Status</option>
+      <option *ngFor="let status of vehicleStatuses()" [value]="status">{{ status }}</option>
+    </select>
   </div>
 
   <!-- Vehicle list -->
@@ -113,4 +140,3 @@
     </div>
   </div>
 </div>
-

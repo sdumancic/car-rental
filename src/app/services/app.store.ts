@@ -179,6 +179,25 @@ export class AppStore {
   private _activeFilter = signal<string | null>(null);
   activeFilter = this._activeFilter.asReadonly();
 
+  // Metadata state
+  private _makes = signal<string[]>([]);
+  makes = this._makes.asReadonly();
+
+  private _models = signal<string[]>([]);
+  models = this._models.asReadonly();
+
+  private _vehicleTypes = signal<string[]>([]);
+  vehicleTypes = this._vehicleTypes.asReadonly();
+
+  private _transmissionTypes = signal<string[]>([]);
+  transmissionTypes = this._transmissionTypes.asReadonly();
+
+  private _fuelTypes = signal<string[]>([]);
+  fuelTypes = this._fuelTypes.asReadonly();
+
+  private _vehicleStatuses = signal<string[]>([]);
+  vehicleStatuses = this._vehicleStatuses.asReadonly();
+
   // Computed signals
   isDarkMode = computed(() => this._darkMode());
 
@@ -281,5 +300,25 @@ export class AppStore {
 
   setActiveFilter(filter: string | null): void {
     this._activeFilter.set(filter);
+  }
+
+  // Metadata methods
+  setMakes(makes: string[]) {
+    this._makes.set(makes);
+  }
+  setModels(models: string[]) {
+    this._models.set(models);
+  }
+  setVehicleTypes(types: string[]) {
+    this._vehicleTypes.set(types);
+  }
+  setTransmissionTypes(types: string[]) {
+    this._transmissionTypes.set(types);
+  }
+  setFuelTypes(types: string[]) {
+    this._fuelTypes.set(types);
+  }
+  setVehicleStatuses(statuses: string[]) {
+    this._vehicleStatuses.set(statuses);
   }
 }
