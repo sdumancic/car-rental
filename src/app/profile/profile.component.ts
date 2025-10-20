@@ -17,6 +17,10 @@ export class ProfileComponent {
   userProfile: any;
   isDarkMode: any;
 
+  // Dialog states
+  showChangePasswordDialog = signal(false);
+  showDeactivateDialog = signal(false);
+
   constructor(
     private store: AppStore,
     private router: Router
@@ -84,22 +88,37 @@ export class ProfileComponent {
   }
 
   onChangePassword() {
-    console.log('Change password clicked');
-    // Navigate to change password page
-    // this.router.navigate(['/change-password']);
+    this.showChangePasswordDialog.set(true);
+  }
+
+  confirmChangePassword() {
+    console.log('Password change link sent to email');
+    // Implement password change logic
+    this.showChangePasswordDialog.set(false);
+  }
+
+  cancelChangePassword() {
+    this.showChangePasswordDialog.set(false);
   }
 
   onLogout() {
     console.log('Logout clicked');
-    // Implement logout logic
-    // this.authService.logout();
-    // this.router.navigate(['/login']);
+    this.router.navigate(['/welcome']);
   }
 
   onDeactivateAccount() {
-    console.log('Deactivate account clicked');
-    // Implement account deactivation
-    // this.userService.deactivateAccount();
+    this.showDeactivateDialog.set(true);
+  }
+
+  confirmDeactivateAccount() {
+    console.log('Account deactivated');
+    // Implement account deactivation logic
+    this.showDeactivateDialog.set(false);
+    this.router.navigate(['/welcome']);
+  }
+
+  cancelDeactivateAccount() {
+    this.showDeactivateDialog.set(false);
   }
 
   navigateToSearch() {

@@ -1,0 +1,269 @@
+<!-- Main container -->
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark">
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 pb-2 bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
+    <button class="p-2 -ml-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
+    <h1 class="text-lg font-bold text-center flex-1">Vehicle Details</h1>
+    <button (click)="onSave()" class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+      Save
+    </button>
+  </header>
+
+  <!-- Image Carousel -->
+  <div class="relative">
+    <div
+      class="bg-cover bg-center flex flex-col justify-end min-h-60 relative"
+      [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url(' + vehicleDetails().images[currentImageIndex()] + ')'">
+      <!-- Carousel indicators -->
+      <div class="flex justify-center gap-2 p-5">
+        <div
+          *ngFor="let image of vehicleDetails().images; let i = index"
+          (click)="selectImage(i)"
+          class="size-2 rounded-full cursor-pointer transition-opacity"
+          [class.bg-white]="i === currentImageIndex()"
+          [class.opacity-50]="i !== currentImageIndex()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="pb-3">
+    <div class="flex border-b border-gray-200 dark:border-gray-800 px-4 justify-between">
+      <button
+        (click)="setActiveTab('details')"
+        class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 flex-1 transition-colors"
+        [class.border-b-primary]="activeTab() === 'details'"
+        [class.text-primary]="activeTab() === 'details'"
+        [class.border-b-transparent]="activeTab() !== 'details'"
+        [class.text-gray-500]="activeTab() !== 'details'"
+        [class.dark:text-gray-400]="activeTab() !== 'details'">
+        <p class="text-sm font-bold leading-normal">Details</p>
+      </button>
+      <button
+        (click)="setActiveTab('equipment')"
+        class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 flex-1 transition-colors"
+        [class.border-b-primary]="activeTab() === 'equipment'"
+        [class.text-primary]="activeTab() === 'equipment'"
+        [class.border-b-transparent]="activeTab() !== 'equipment'"
+        [class.text-gray-500]="activeTab() !== 'equipment'"
+        [class.dark:text-gray-400]="activeTab() !== 'equipment'">
+        <p class="text-sm font-bold leading-normal">Equipment</p>
+      </button>
+      <button
+        (click)="setActiveTab('media')"
+        class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 flex-1 transition-colors"
+        [class.border-b-primary]="activeTab() === 'media'"
+        [class.text-primary]="activeTab() === 'media'"
+        [class.border-b-transparent]="activeTab() !== 'media'"
+        [class.text-gray-500]="activeTab() !== 'media'"
+        [class.dark:text-gray-400]="activeTab() !== 'media'">
+        <p class="text-sm font-bold leading-normal">Media</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Details Tab Content -->
+  <div *ngIf="activeTab() === 'details'" class="flex flex-col gap-4 p-4">
+    <!-- Make and Model -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Make</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().make"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let make of makeOptions" [value]="make">{{ make }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Model</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().model"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let model of modelOptions" [value]="model">{{ model }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Year and VIN -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Year</p>
+        <input
+          type="number"
+          [(ngModel)]="vehicleDetails().year"
+          class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
+      </label>
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">VIN</p>
+        <input
+          type="text"
+          [(ngModel)]="vehicleDetails().vin"
+          class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
+      </label>
+    </div>
+
+    <!-- License Plate -->
+    <label class="flex flex-col">
+      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">License Plate</p>
+      <input
+        type="text"
+        [(ngModel)]="vehicleDetails().licensePlate"
+        class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
+    </label>
+
+    <!-- Type and Status -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Type</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().type"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Status</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().status"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Passengers and Doors -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Passengers</p>
+        <input
+          type="number"
+          [(ngModel)]="vehicleDetails().passengers"
+          min="1"
+          max="20"
+          class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
+      </label>
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Doors</p>
+        <input
+          type="number"
+          [(ngModel)]="vehicleDetails().doors"
+          min="2"
+          max="5"
+          class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
+      </label>
+    </div>
+
+    <!-- Fuel Type and Transmission -->
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Fuel Type</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().fuelType"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let fuel of fuelTypeOptions" [value]="fuel">{{ fuel }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+      <label class="flex flex-col">
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Transmission</p>
+        <div class="relative">
+          <select
+            [(ngModel)]="vehicleDetails().transmission"
+            class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <option *ngFor="let trans of transmissionOptions" [value]="trans">{{ trans }}</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none">expand_more</span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Equipment Tab Content -->
+  <div *ngIf="activeTab() === 'equipment'" class="flex flex-col gap-0 overflow-y-auto flex-1">
+    <div
+      *ngFor="let item of equipment(); let i = index; let last = last"
+      class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800"
+      [class.border-b-0]="last">
+      <p class="text-zinc-900 dark:text-white text-base font-medium leading-normal">{{ item.name }}</p>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          class="sr-only peer"
+          [checked]="item.enabled"
+          (change)="toggleEquipment(i)"/>
+        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary dark:peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500 dark:bg-gray-600"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Media Tab Content -->
+  <div *ngIf="activeTab() === 'media'" class="flex flex-col flex-1 pb-20">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-4 p-4">
+      <div *ngFor="let item of mediaItems()" class="relative group">
+        <div
+          class="bg-cover bg-center flex flex-col rounded-lg justify-center items-center p-4 aspect-square"
+          [class.justify-end]="!item.isVideo"
+          [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url(' + item.url + ')'">
+
+          <!-- Action buttons -->
+          <div class="absolute top-2 right-2 flex space-x-2">
+            <button
+              (click)="setCoverImage(item.id)"
+              class="bg-black/50 p-1.5 rounded-full text-white hover:bg-black/70 transition-colors">
+              <span class="material-symbols-outlined text-base">{{ item.isCover ? 'star' : 'star_outline' }}</span>
+            </button>
+            <button
+              (click)="deleteMediaItem(item.id)"
+              class="bg-black/50 p-1.5 rounded-full text-white hover:bg-black/70 transition-colors">
+              <span class="material-symbols-outlined text-base">delete</span>
+            </button>
+          </div>
+
+          <!-- Play icon for videos -->
+          <div *ngIf="item.isVideo" class="bg-black/50 p-3 rounded-full text-white">
+            <span class="material-symbols-outlined text-3xl">play_arrow</span>
+          </div>
+        </div>
+
+        <!-- Media type selector -->
+        <div class="absolute bottom-4 left-4 w-[calc(100%-2rem)]">
+          <select
+            [(ngModel)]="item.type"
+            class="w-full bg-gray-800/70 text-white text-sm font-semibold p-2 rounded-md border-0 focus:ring-0 focus:outline-none appearance-none">
+            <option value="COVER_IMAGE">COVER_IMAGE</option>
+            <option value="FRONT_IMAGE">FRONT_IMAGE</option>
+            <option value="BACK_IMAGE">BACK_IMAGE</option>
+            <option value="SIDE_IMAGE">SIDE_IMAGE</option>
+            <option value="INTERIOR_IMAGE">INTERIOR_IMAGE</option>
+            <option value="EXTERIOR_VIDEO">EXTERIOR_VIDEO</option>
+            <option value="INTERIOR_VIDEO">INTERIOR_VIDEO</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Add Button -->
+    <div class="fixed bottom-5 right-5">
+      <button class="flex items-center justify-center rounded-full h-16 w-16 bg-primary text-white shadow-lg hover:bg-primary/90 transition-colors">
+        <span class="material-symbols-outlined text-3xl">add</span>
+      </button>
+    </div>
+  </div>
+</div>

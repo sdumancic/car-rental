@@ -25,6 +25,9 @@ export class ReturnCarComponent {
     mileage: null as File | null
   };
 
+  // Dialog states
+  showSuccessDialog = signal(false);
+
   // Create a computed signal for dark mode state
   isDarkModeActive = computed(() => this.themeService.darkMode());
 
@@ -64,9 +67,14 @@ export class ReturnCarComponent {
     console.log('Submitting return car form...');
     console.log('Condition report:', this.conditionReport);
     console.log('Photos:', this.photos);
-    // Implement submission logic here
-    // After successful submission, navigate to confirmation or search
-    // this.router.navigate(['/search']);
+
+    // Show success dialog
+    this.showSuccessDialog.set(true);
+
+    // Redirect to my-rentals after 2 seconds
+    setTimeout(() => {
+      this.router.navigate(['/my-rentals']);
+    }, 2000);
   }
 
   navigateToSearch() {
