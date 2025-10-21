@@ -47,7 +47,7 @@
       [ngModel]="selectedVehicleType()"
       (ngModelChange)="onVehicleTypeChange($event)"
     >
-      <option value="" disabled>Vehicle Type</option>
+      <option value="">Vehicle Type</option>
       <option *ngFor="let type of vehicleTypes()" [value]="type">{{ type }}</option>
     </select>
     <!-- Passengers input -->
@@ -76,7 +76,7 @@
       [ngModel]="selectedFuelType()"
       (ngModelChange)="onFuelTypeChange($event)"
     >
-      <option value="" disabled>Fuel Type</option>
+      <option value="">Fuel Type</option>
       <option *ngFor="let fuel of fuelTypes()" [value]="fuel">{{ fuel }}</option>
     </select>
     <!-- Transmission Dropdown -->
@@ -85,7 +85,7 @@
       [ngModel]="selectedTransmission()"
       (ngModelChange)="onTransmissionChange($event)"
     >
-      <option value="" disabled>Transmission</option>
+      <option value="">Transmission</option>
       <option *ngFor="let trans of transmissionTypes()" [value]="trans">{{ trans }}</option>
     </select>
     <!-- Status Dropdown -->
@@ -94,7 +94,7 @@
       [ngModel]="selectedStatus()"
       (ngModelChange)="onStatusChange($event)"
     >
-      <option value="" disabled>Status</option>
+      <option value="">Status</option>
       <option *ngFor="let status of vehicleStatuses()" [value]="status">{{ status }}</option>
     </select>
   </div>

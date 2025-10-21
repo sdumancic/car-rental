@@ -13,5 +13,8 @@ export class VehicleService {
     Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
     return this.http.get<any>(this.baseUrl, { params });
   }
-}
 
+  createVehicle(vehicle: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, vehicle);
+  }
+}

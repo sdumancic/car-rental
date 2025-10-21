@@ -103,7 +103,23 @@ export class AdminCarOverviewComponent implements OnInit {
     };
     try {
       const response = await this.vehicleService.searchVehicles(params).toPromise();
-      this.vehicles.set(response.content || []);
+      const vehicles = (response.data || []).map((v: any) => ({
+        id: v.id,
+        make: v.make,
+        model: v.model,
+        year: v.year,
+        status: v.status,
+        imageUrl: v.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
+        vin: v.vin,
+        licensePlate: v.licensePlate,
+        vehicleType: v.vehicleType,
+        passengers: v.passengers,
+        doors: v.doors,
+        fuelType: v.fuelType,
+        transmission: v.transmission,
+        active: v.active
+      }));
+      this.vehicles.set(vehicles);
     } catch (error) {
       console.error('Vehicle search failed', error);
       this.vehicles.set([]);
@@ -113,7 +129,11 @@ export class AdminCarOverviewComponent implements OnInit {
   async onMakeChange(make: string) {
     this.selectedMake.set(make);
     this.selectedModel.set('');
-    await this.metadataService.fetchModels(make);
+    if (make) {
+      await this.metadataService.fetchModels(make);
+    } else {
+      this.appStore.setModels([]);
+    }
     await this.performVehicleSearch();
   }
 

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ThemeService } from '../services/theme.service';
 import { MetadataService } from '../services/metadata.service';
 import { AppStore } from '../services/app.store';
+import { VehicleService } from '../services/vehicle.service';
 
 interface NewVehicle {
   make: string;
@@ -46,24 +47,30 @@ export class AdminCreateCarComponent {
   // Show success modal
   showSuccessModal = signal(false);
 
+  // Show success dialog
+  showSuccessDialog = signal(false);
+
   // VIN validation error
   vinError = signal(false);
 
   // Dropdown options
-  fuelTypeOptions = ['Gasoline', 'Diesel', 'Electric', 'Hybrid'];
-  transmissionOptions = ['Automatic', 'Manual'];
+  get fuelTypeOptions() { return this.appStore.fuelTypes; }
+  get transmissionOptions() { return this.appStore.transmissionTypes; }
 
   constructor(
     public themeService: ThemeService,
     private router: Router,
     private location: Location,
     private metadataService: MetadataService,
-    public appStore: AppStore
+    public appStore: AppStore,
+    private vehicleService: VehicleService
   ) {}
 
   async ngOnInit() {
     await this.metadataService.fetchMakes();
     await this.metadataService.fetchVehicleTypes();
+    await this.metadataService.fetchTransmissionTypes();
+    await this.metadataService.fetchFuelTypes();
     await this.metadataService.fetchVehicleStatuses();
   }
 
@@ -126,7 +133,7 @@ export class AdminCreateCarComponent {
     this.validateVIN();
   }
 
-  addVehicle() {
+  async addVehicle() {
     // Validate form
     const vehicle = this.newVehicle();
 
@@ -140,12 +147,30 @@ export class AdminCreateCarComponent {
       return;
     }
 
-    // Show success modal
-    this.showSuccessModal.set(true);
+    // Prepare payload for API
+    const payload = {
+      make: vehicle.make,
+      model: vehicle.model,
+      year: Number(vehicle.year),
+      vin: vehicle.vin,
+      licensePlate: vehicle.licensePlate,
+      vehicleType: vehicle.type,
+      status: vehicle.status,
+      passengers: vehicle.passengers,
+      doors: vehicle.doors,
+      fuelType: vehicle.fuelType.toUpperCase(),
+      transmission: vehicle.transmission.toUpperCase()
+    };
 
-    console.log('Adding new vehicle:', vehicle);
-
-    // TODO: Implement API call to save vehicle
+    try {
+      await this.vehicleService.createVehicle(payload).toPromise();
+      this.showSuccessDialog.set(true);
+      setTimeout(() => {
+        this.router.navigate(['/admin-car-overview']);
+      }, 2000);
+    } catch (error) {
+      alert('Failed to add vehicle. Please try again.');
+    }
   }
 
   closeSuccessModal() {
