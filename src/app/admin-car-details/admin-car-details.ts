@@ -1,8 +1,11 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, Inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../services/theme.service';
+import { MetadataService } from '../services/metadata.service';
+import { AppStore } from '../services/app.store';
+import { VehicleService } from '../services/vehicle.service';
 
 interface VehicleDetails {
   make: string;
@@ -47,26 +50,9 @@ export class AdminCarDetailsComponent {
   currentImageIndex = signal(0);
 
   // Vehicle details
-  vehicleDetails = signal<VehicleDetails>({
-    make: 'Toyota',
-    model: 'Camry',
-    year: 2023,
-    vin: '1GKSK3BD3CR11',
-    licensePlate: '7GTR123',
-    type: 'Sedan',
-    status: 'Available',
-    passengers: 5,
-    doors: 4,
-    fuelType: 'Gasoline',
-    transmission: 'Automatic',
-    images: [
-      'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop',
-      'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop'
-    ]
-  });
+  vehicleDetails = signal<VehicleDetails | null>(null);
+  isLoading = signal<boolean>(true);
+  error = signal<string | null>(null);
 
   // Equipment items
   equipment = signal<EquipmentItem[]>([
@@ -96,22 +82,125 @@ export class AdminCarDetailsComponent {
     { id: 7, url: 'https://www.youtube.com/embed/tgbNymZ7vqY', type: 'INTERIOR_VIDEO', isVideo: true, isCover: false }
   ]);
 
-  // Dropdown options
-  makeOptions = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'Jeep'];
-  modelOptions = ['Camry', 'Accord', 'Mustang', 'Silverado', 'Wrangler'];
-  typeOptions = ['Sedan', 'SUV', 'Truck', 'Coupe', 'Hatchback'];
-  statusOptions = ['Available', 'Rented', 'Maintenance'];
-  fuelTypeOptions = ['Gasoline', 'Diesel', 'Electric', 'Hybrid'];
-  transmissionOptions = ['Automatic', 'Manual'];
+  // Dropdown options from metadata
+  makeOptions: string[] = [];
+  modelOptions: string[] = [];
+  typeOptions: string[] = [];
+  statusOptions: string[] = [];
+  fuelTypeOptions: string[] = [];
+  transmissionOptions: string[] = [];
 
   // Dark mode
   isDarkModeActive = computed(() => this.themeService.darkMode());
 
   constructor(
-    public themeService: ThemeService,
     private router: Router,
-    private location: Location
-  ) {}
+    private location: Location,
+    private themeService: ThemeService,
+    private activatedRoute: ActivatedRoute,
+    private metadataService: MetadataService,
+    private appStore: AppStore,
+    private vehicleService: VehicleService // dodano
+  ) {
+    const nav = this.router.getCurrentNavigation();
+    const state = nav?.extras?.state as { vehicleDetails?: any };
+    if (state?.vehicleDetails) {
+      // Merge with defaults to ensure all fields exist
+      const defaults: VehicleDetails = {
+        make: '',
+        model: '',
+        year: 0,
+        vin: '',
+        licensePlate: '',
+        type: '',
+        status: '',
+        passengers: 0,
+        doors: 0,
+        fuelType: '',
+        transmission: '',
+        images: []
+      };
+      // Map vehicleType to type if present
+      const incoming = { ...state.vehicleDetails };
+      if (incoming.vehicleType && !incoming.type) {
+        incoming.type = incoming.vehicleType;
+      }
+      // Map vehicleModel to model if present
+      if (incoming.vehicleModel && !incoming.model) {
+        incoming.model = incoming.vehicleModel;
+      }
+      this.vehicleDetails.set({ ...defaults, ...incoming, images: incoming.images ?? [] });
+    }
+  }
+
+  async ngOnInit() {
+    this.activatedRoute.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.isLoading.set(true);
+        this.error.set(null);
+        this.vehicleService.getVehicleById(Number(id)).subscribe({
+          next: async details => {
+            if (details) {
+              // Map vehicleType to type if present
+              if (details.vehicleType && !details.type) {
+                details.type = details.vehicleType;
+              }
+              // Map vehicleModel to model if present
+              if (details.vehicleModel && !details.model) {
+                details.model = details.vehicleModel;
+              }
+              await this.metadataService.fetchModels(details.make);
+              this.modelOptions = this.appStore.models();
+              // If details.model is not in modelOptions, set to first available
+              if (!this.modelOptions.includes(details.model)) {
+                details.model = this.modelOptions[0] || '';
+              }
+              this.vehicleDetails.set(details);
+            } else {
+              this.error.set('Vehicle not found.');
+              this.vehicleDetails.set(null);
+            }
+            this.isLoading.set(false);
+          },
+          error: () => {
+            this.error.set('Failed to fetch vehicle details.');
+            this.vehicleDetails.set(null);
+            this.isLoading.set(false);
+          }
+        });
+      }
+    });
+    await this.metadataService.fetchAllMetadata();
+    this.makeOptions = this.appStore.makes();
+    this.typeOptions = this.appStore.vehicleTypes();
+    this.statusOptions = this.appStore.vehicleStatuses();
+    this.fuelTypeOptions = this.appStore.fuelTypes();
+    this.transmissionOptions = this.appStore.transmissionTypes();
+  }
+
+  async onMakeChange() {
+    const details = this.vehicleDetails();
+    await this.metadataService.fetchModels(details?.make ?? '');
+    this.modelOptions = this.appStore.models();
+    // Reset model if not in options
+    if (!this.modelOptions.includes(details?.model ?? '')) {
+      this.vehicleDetails.set({
+        make: details?.make ?? '',
+        model: this.modelOptions[0] || '',
+        year: details?.year ?? 0,
+        vin: details?.vin ?? '',
+        licensePlate: details?.licensePlate ?? '',
+        type: details?.type ?? '',
+        status: details?.status ?? '',
+        passengers: details?.passengers ?? 0,
+        doors: details?.doors ?? 0,
+        fuelType: details?.fuelType ?? '',
+        transmission: details?.transmission ?? '',
+        images: details?.images ?? []
+      });
+    }
+  }
 
   goBack() {
     this.location.back();
@@ -157,4 +246,6 @@ export class AdminCarDetailsComponent {
     });
     this.mediaItems.set(items);
   }
+
+
 }

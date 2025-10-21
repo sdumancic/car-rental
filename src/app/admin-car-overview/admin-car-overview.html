@@ -139,4 +139,25 @@
       <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Try adjusting your search criteria</p>
     </div>
   </div>
+
+  <!-- Pagination controls -->
+  <div class="flex items-center justify-center gap-4 py-4">
+    <button
+      class="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white font-medium disabled:opacity-50"
+      [disabled]="page() === 0"
+      (click)="page.set(page() - 1); performVehicleSearch()"
+    >
+      Previous
+    </button>
+    <span class="text-sm text-zinc-700 dark:text-zinc-300">
+      Page {{ page() + 1 }} of {{ totalPages() }}
+    </span>
+    <button
+      class="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white font-medium disabled:opacity-50"
+      [disabled]="page() + 1 >= totalPages()"
+      (click)="page.set(page() + 1); performVehicleSearch()"
+    >
+      Next
+    </button>
+  </div>
 </div>

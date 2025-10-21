@@ -17,4 +17,8 @@ export class VehicleService {
   createVehicle(vehicle: any): Observable<any> {
     return this.http.post<any>(this.baseUrl, vehicle);
   }
+
+  getVehicleById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  }
 }

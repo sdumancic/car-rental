@@ -12,14 +12,14 @@
   </header>
 
   <!-- Image Carousel -->
-  <div class="relative">
+  <div class="relative" *ngIf="vehicleDetails() && vehicleDetails()!.images && vehicleDetails()!.images.length > 0">
     <div
       class="bg-cover bg-center flex flex-col justify-end min-h-60 relative"
-      [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url(' + vehicleDetails().images[currentImageIndex()] + ')'">
+      [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url(' + vehicleDetails()!.images[currentImageIndex()] + ')'">
       <!-- Carousel indicators -->
       <div class="flex justify-center gap-2 p-5">
         <div
-          *ngFor="let image of vehicleDetails().images; let i = index"
+          *ngFor="let image of vehicleDetails()!.images; let i = index"
           (click)="selectImage(i)"
           class="size-2 rounded-full cursor-pointer transition-opacity"
           [class.bg-white]="i === currentImageIndex()"
@@ -27,6 +27,10 @@
         </div>
       </div>
     </div>
+  </div>
+  <!-- Optionally, show a fallback if no images exist -->
+  <div class="relative flex items-center justify-center min-h-60" *ngIf="vehicleDetails() && (!vehicleDetails()!.images || vehicleDetails()!.images.length === 0)">
+    <span class="text-gray-400">No images available</span>
   </div>
 
   <!-- Tabs -->
@@ -66,14 +70,14 @@
   </div>
 
   <!-- Details Tab Content -->
-  <div *ngIf="activeTab() === 'details'" class="flex flex-col gap-4 p-4">
-    <!-- Make and Model -->
+  <div *ngIf="activeTab() === 'details' && vehicleDetails()" class="flex flex-col gap-4 p-4">
+  <!-- Make and Model -->
     <div class="grid grid-cols-2 gap-4">
       <label class="flex flex-col">
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Make</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().make"
+            [(ngModel)]="vehicleDetails()!.make"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let make of makeOptions" [value]="make">{{ make }}</option>
           </select>
@@ -84,7 +88,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Model</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().model"
+            [(ngModel)]="vehicleDetails()!.model"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let model of modelOptions" [value]="model">{{ model }}</option>
           </select>
@@ -99,14 +103,14 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Year</p>
         <input
           type="number"
-          [(ngModel)]="vehicleDetails().year"
+          [(ngModel)]="vehicleDetails()!.year"
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
       </label>
       <label class="flex flex-col">
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">VIN</p>
         <input
           type="text"
-          [(ngModel)]="vehicleDetails().vin"
+          [(ngModel)]="vehicleDetails()!.vin"
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
       </label>
     </div>
@@ -116,7 +120,7 @@
       <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">License Plate</p>
       <input
         type="text"
-        [(ngModel)]="vehicleDetails().licensePlate"
+        [(ngModel)]="vehicleDetails()!.licensePlate"
         class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
     </label>
 
@@ -126,7 +130,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Type</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().type"
+            [(ngModel)]="vehicleDetails()!.type"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
           </select>
@@ -137,7 +141,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Status</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().status"
+            [(ngModel)]="vehicleDetails()!.status"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
           </select>
@@ -152,7 +156,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Passengers</p>
         <input
           type="number"
-          [(ngModel)]="vehicleDetails().passengers"
+          [(ngModel)]="vehicleDetails()!.passengers"
           min="1"
           max="20"
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
@@ -161,7 +165,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Doors</p>
         <input
           type="number"
-          [(ngModel)]="vehicleDetails().doors"
+          [(ngModel)]="vehicleDetails()!.doors"
           min="2"
           max="5"
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
@@ -174,7 +178,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Fuel Type</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().fuelType"
+            [(ngModel)]="vehicleDetails()!.fuelType"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let fuel of fuelTypeOptions" [value]="fuel">{{ fuel }}</option>
           </select>
@@ -185,7 +189,7 @@
         <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">Transmission</p>
         <div class="relative">
           <select
-            [(ngModel)]="vehicleDetails().transmission"
+            [(ngModel)]="vehicleDetails()!.transmission"
             class="appearance-none w-full h-12 px-3 pr-10 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
             <option *ngFor="let trans of transmissionOptions" [value]="trans">{{ trans }}</option>
           </select>

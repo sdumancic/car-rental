@@ -42,6 +42,9 @@ export class AdminCarOverviewComponent implements OnInit {
   sort = signal<string>('+make,-model');
   page = signal<number>(0);
   size = signal<number>(10);
+  totalVehicles = signal<number>(0);
+  totalRecords = signal<number>(0);
+  totalPages = computed(() => Math.max(1, Math.ceil(this.totalRecords() / this.size())));
 
   // Vehicles list
   vehicles = signal<Vehicle[]>([]);
@@ -120,15 +123,19 @@ export class AdminCarOverviewComponent implements OnInit {
         active: v.active
       }));
       this.vehicles.set(vehicles);
+      this.totalRecords.set(response.metadata?.totalRecords ?? 0);
+      this.size.set(response.metadata?.size ?? 10);
     } catch (error) {
       console.error('Vehicle search failed', error);
       this.vehicles.set([]);
+      this.totalRecords.set(0);
     }
   }
 
   async onMakeChange(make: string) {
     this.selectedMake.set(make);
     this.selectedModel.set('');
+    this.page.set(0);
     if (make) {
       await this.metadataService.fetchModels(make);
     } else {
@@ -139,41 +146,49 @@ export class AdminCarOverviewComponent implements OnInit {
 
   async onModelChange(model: string) {
     this.selectedModel.set(model);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onYearChange(year: number) {
     this.selectedYear.set(year);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onVehicleTypeChange(type: string) {
     this.selectedVehicleType.set(type);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onPassengersChange(passengers: number) {
     this.selectedPassengers.set(passengers);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onDoorsChange(doors: number) {
     this.selectedDoors.set(doors);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onFuelTypeChange(fuel: string) {
     this.selectedFuelType.set(fuel);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onTransmissionChange(trans: string) {
     this.selectedTransmission.set(trans);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
   async onStatusChange(status: string) {
     this.selectedStatus.set(status);
+    this.page.set(0);
     await this.performVehicleSearch();
   }
 
@@ -186,9 +201,8 @@ export class AdminCarOverviewComponent implements OnInit {
     this.router.navigate(['/admin-create-car']);
   }
 
-  onEditVehicle(vehicle: Vehicle) {
-    // Navigate to car details page
-    this.router.navigate(['/admin-car-details']);
+  async onEditVehicle(vehicle: Vehicle) {
+    this.router.navigate(['/admin-car-details', vehicle.id]);
   }
 
   onDeleteVehicle(vehicle: Vehicle) {
@@ -208,4 +222,6 @@ export class AdminCarOverviewComponent implements OnInit {
   isDarkMode() {
     return this.isDarkModeActive();
   }
+
+  protected readonly Math = Math
 }
