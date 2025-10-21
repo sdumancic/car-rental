@@ -79,7 +79,11 @@ export class AdminCarOverviewComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.metadataService.fetchAllMetadata();
+    await this.metadataService.fetchMakes();
+    await this.metadataService.fetchVehicleTypes();
+    await this.metadataService.fetchTransmissionTypes();
+    await this.metadataService.fetchFuelTypes();
+    await this.metadataService.fetchVehicleStatuses();
     await this.performVehicleSearch();
   }
 

@@ -17,18 +17,26 @@
     <div class="grid grid-cols-1 gap-6">
       <label class="flex flex-col">
         <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Make</p>
-        <input
+        <select
           [(ngModel)]="newVehicle().make"
+          (ngModelChange)="onMakeChange($event)"
           class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:border-primary dark:focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal"
-          placeholder="e.g., Toyota"/>
+        >
+          <option value="" disabled>Choose make</option>
+          <option *ngFor="let make of makes()" [value]="make">{{ make }}</option>
+        </select>
       </label>
 
       <label class="flex flex-col">
         <p class="text-text-light dark:text-text-dark text-base font-medium leading-normal pb-2">Model</p>
-        <input
+        <select
           [(ngModel)]="newVehicle().model"
+          [disabled]="!newVehicle().make || !models().length"
           class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:border-primary dark:focus:border-primary h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal"
-          placeholder="e.g., Camry"/>
+        >
+          <option value="" disabled>Choose model</option>
+          <option *ngFor="let model of models()" [value]="model">{{ model }}</option>
+        </select>
       </label>
 
       <div class="grid grid-cols-2 gap-4">
@@ -73,7 +81,8 @@
           <select
             [(ngModel)]="newVehicle().type"
             class="form-select appearance-none w-full rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:border-primary dark:focus:border-primary h-14 p-[15px] text-base font-normal leading-normal">
-            <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
+            <option value="" disabled>Choose type</option>
+            <option *ngFor="let type of vehicleTypes()" [value]="type">{{ type }}</option>
           </select>
           <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-light dark:text-text-dark pointer-events-none">expand_more</span>
         </div>
@@ -85,7 +94,8 @@
           <select
             [(ngModel)]="newVehicle().status"
             class="form-select appearance-none w-full rounded-lg text-text-light dark:text-text-dark focus:outline-0 focus:ring-2 focus:ring-primary border-gray-300 dark:border-gray-600 bg-white dark:bg-background-dark focus:border-primary dark:focus:border-primary h-14 p-[15px] text-base font-normal leading-normal">
-            <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+            <option value="" disabled>Choose status</option>
+            <option *ngFor="let status of vehicleStatuses()" [value]="status">{{ status }}</option>
           </select>
           <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-text-light dark:text-text-dark pointer-events-none">expand_more</span>
         </div>
@@ -192,4 +202,3 @@
     </div>
   </div>
 </div>
-

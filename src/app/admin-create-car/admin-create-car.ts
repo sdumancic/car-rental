@@ -3,6 +3,8 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeService } from '../services/theme.service';
+import { MetadataService } from '../services/metadata.service';
+import { AppStore } from '../services/app.store';
 
 interface NewVehicle {
   make: string;
@@ -48,16 +50,32 @@ export class AdminCreateCarComponent {
   vinError = signal(false);
 
   // Dropdown options
-  typeOptions = ['Sedan', 'SUV', 'Truck', 'Van'];
-  statusOptions = ['Available', 'Rented', 'Maintenance', 'Unavailable'];
   fuelTypeOptions = ['Gasoline', 'Diesel', 'Electric', 'Hybrid'];
   transmissionOptions = ['Automatic', 'Manual'];
 
   constructor(
     public themeService: ThemeService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private metadataService: MetadataService,
+    public appStore: AppStore
   ) {}
+
+  async ngOnInit() {
+    await this.metadataService.fetchMakes();
+    await this.metadataService.fetchVehicleTypes();
+    await this.metadataService.fetchVehicleStatuses();
+  }
+
+  get makes() { return this.appStore.makes; }
+  get models() { return this.appStore.models; }
+  get vehicleTypes() { return this.appStore.vehicleTypes; }
+  get vehicleStatuses() { return this.appStore.vehicleStatuses; }
+
+  async onMakeChange(make: string) {
+    this.newVehicle.update(vehicle => ({ ...vehicle, make, model: '' }));
+    await this.metadataService.fetchModels(make);
+  }
 
   goBack() {
     this.location.back();
@@ -136,4 +154,3 @@ export class AdminCreateCarComponent {
     this.goBack();
   }
 }
-
