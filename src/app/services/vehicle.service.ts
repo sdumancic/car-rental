@@ -44,4 +44,24 @@ export class VehicleService {
     formData.append('fileName', fileName);
     return this.http.post<any>(`http://localhost:8090/v1/vehicles/${vehicleId}/media/${mediaId}/upload`, formData);
   }
+
+  assignEquipmentToVehicle(vehicleId: number, equipmentId: number) {
+    return this.http.post('http://localhost:8090/v1/vehicle-equipment', {
+      vehicleId,
+      equipmentId
+    });
+  }
+
+  removeEquipmentFromVehicle(vehicleId: number, equipmentId: number) {
+    return this.http.delete(`http://localhost:8090/v1/vehicle-equipment/${vehicleId}/${equipmentId}`, {
+      body: { vehicleId, equipmentId },
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  updateVehicle(vehicleId: number, vehicleData: any) {
+    return this.http.put(`http://localhost:8090/v1/vehicles/${vehicleId}`, vehicleData, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 }

@@ -6,25 +6,50 @@
       <span class="material-symbols-outlined">arrow_back</span>
     </button>
     <h1 class="text-lg font-bold text-center flex-1">Vehicle Details</h1>
-    <button (click)="onSave()" class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+    <button *ngIf="activeTab() === 'details'"
+            (click)="onSave()"
+            class="bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
       Save
     </button>
+
   </header>
 
   <!-- Image Carousel -->
+  <!-- Image Carousel -->
   <div class="relative" *ngIf="vehicleDetails() && vehicleDetails()!.images && vehicleDetails()!.images.length > 0">
-    <div
-      class="bg-cover bg-center flex flex-col justify-end min-h-60 relative"
-      [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url(' + vehicleDetails()!.images[currentImageIndex()] + ')'">
-      <!-- Carousel indicators -->
-      <div class="flex justify-center gap-2 p-5">
-        <div
-          *ngFor="let image of vehicleDetails()!.images; let i = index"
-          (click)="selectImage(i)"
-          class="size-2 rounded-full cursor-pointer transition-opacity"
-          [class.bg-white]="i === currentImageIndex()"
-          [class.opacity-50]="i !== currentImageIndex()">
-        </div>
+    <div class="relative flex items-center justify-center">
+      <!-- Left Arrow -->
+      <button
+        class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/40 text-white rounded-full p-2 hover:bg-black/70 transition-colors"
+        (click)="selectImage((currentImageIndex() - 1 + vehicleDetails()!.images.length) % vehicleDetails()!.images.length)"
+        [disabled]="vehicleDetails()!.images.length < 2"
+        aria-label="Previous image">
+        <span class="material-symbols-outlined text-2xl">chevron_left</span>
+      </button>
+
+      <!-- Carousel Image -->
+      <div
+        class="bg-cover bg-center flex flex-col justify-end min-h-[320px] h-[320px] w-full max-w-xl rounded-xl shadow-lg"
+        [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 25%), url(' + vehicleDetails()!.images[currentImageIndex()] + ')'">
+      </div>
+
+      <!-- Right Arrow -->
+      <button
+        class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/40 text-white rounded-full p-2 hover:bg-black/70 transition-colors"
+        (click)="selectImage((currentImageIndex() + 1) % vehicleDetails()!.images.length)"
+        [disabled]="vehicleDetails()!.images.length < 2"
+        aria-label="Next image">
+        <span class="material-symbols-outlined text-2xl">chevron_right</span>
+      </button>
+    </div>
+    <!-- Carousel indicators -->
+    <div class="flex justify-center gap-2 p-3">
+      <div
+        *ngFor="let image of vehicleDetails()!.images; let i = index"
+        (click)="selectImage(i)"
+        class="size-2 rounded-full cursor-pointer transition-opacity"
+        [class.bg-primary]="i === currentImageIndex()"
+        [class.opacity-50]="i !== currentImageIndex()">
       </div>
     </div>
   </div>
@@ -32,6 +57,7 @@
   <div class="relative flex items-center justify-center min-h-60" *ngIf="vehicleDetails() && (!vehicleDetails()!.images || vehicleDetails()!.images.length === 0)">
     <span class="text-gray-400">No images available</span>
   </div>
+
 
   <!-- Tabs -->
   <div class="pb-3">
@@ -107,20 +133,20 @@
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
       </label>
       <label class="flex flex-col">
-        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">VIN</p>
+        <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">License plate</p>
         <input
           type="text"
-          [(ngModel)]="vehicleDetails()!.vin"
+          [(ngModel)]="vehicleDetails()!.licensePlate"
           class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
       </label>
     </div>
 
     <!-- License Plate -->
     <label class="flex flex-col">
-      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">License Plate</p>
+      <p class="text-zinc-900 dark:text-white text-sm font-medium leading-normal pb-2">VIN</p>
       <input
         type="text"
-        [(ngModel)]="vehicleDetails()!.licensePlate"
+        [(ngModel)]="vehicleDetails()!.vin"
         class="w-full h-12 px-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 border-0 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"/>
     </label>
 

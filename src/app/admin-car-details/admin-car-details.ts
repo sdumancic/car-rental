@@ -173,6 +173,8 @@ export class AdminCarDetailsComponent {
                 details.model = this.modelOptions[0] || '';
               }
               this.vehicleDetails.set(details);
+              // Fetch images for carousel
+              await this.loadVehicleImages();
             } else {
               this.error.set('Vehicle not found.');
               this.vehicleDetails.set(null);
@@ -291,6 +293,9 @@ export class AdminCarDetailsComponent {
     if (tab === 'media') {
       this.loadVehicleMedia();
     }
+    if (tab === 'details') {
+      this.loadVehicleImages();
+    }
   }
 
   selectImage(index: number) {
@@ -298,9 +303,31 @@ export class AdminCarDetailsComponent {
   }
 
   onSave() {
-    console.log('Saving vehicle details:', this.vehicleDetails());
-    // Implement save logic
-    alert('Vehicle details saved successfully!');
+    const details = this.vehicleDetails();
+    if (!details) return;
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    // Prepare payload for API
+    const payload = {
+      make: details.make,
+      model: details.model,
+      year: details.year,
+      vin: details.vin,
+      licensePlate: details.licensePlate,
+      vehicleType: details.type,
+      status: details.status,
+      passengers: details.passengers,
+      doors: details.doors,
+      fuelType: details.fuelType,
+      transmission: details.transmission
+    };
+    this.vehicleService.updateVehicle(vehicleId, payload).subscribe({
+      next: () => {
+        alert('Vehicle details saved successfully!');
+      },
+      error: () => {
+        alert('Failed to save vehicle details.');
+      }
+    });
   }
 
   toggleDarkMode() {
@@ -313,6 +340,24 @@ export class AdminCarDetailsComponent {
 
   toggleEquipment(index: number) {
     const items = this.equipment();
+    const equipmentId = this.equipmentList()[index]?.id;
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!equipmentId || !vehicleId) return;
+
+    // If currently enabled, user is unchecking (turning OFF) -> DELETE
+    if (items[index].enabled) {
+      this.vehicleService.removeEquipmentFromVehicle(vehicleId, equipmentId).subscribe({
+        next: () => {},
+        error: () => { alert('Failed to remove equipment'); }
+      });
+    } else {
+      // If currently disabled, user is checking (turning ON) -> POST
+      this.vehicleService.assignEquipmentToVehicle(vehicleId, equipmentId).subscribe({
+        next: () => {},
+        error: () => { alert('Failed to assign equipment'); }
+      });
+    }
+    // Toggle the state after API call
     items[index].enabled = !items[index].enabled;
     this.equipment.set([...items]);
   }
@@ -376,4 +421,30 @@ export class AdminCarDetailsComponent {
     input.click();
   }
 
+  async loadVehicleImages() {
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    this.vehicleService.getVehicleMedia(vehicleId).subscribe(async media => {
+      let imageUrls: string[] = [];
+      if (media && media.length > 0) {
+        const imageTypes = [
+          'COVER_IMAGE', 'FRONT_IMAGE', 'BACK_IMAGE', 'SIDE_IMAGE', 'INTERIOR_IMAGE'
+        ];
+        const imageMedia = media.filter((item: any) => imageTypes.includes(item.vehicleMediaType));
+        const imagePromises = imageMedia.map(async (item: any) => {
+          try {
+            const blob = await this.vehicleService.downloadVehicleMedia(vehicleId, item.id).toPromise();
+            return window.URL.createObjectURL(blob!);
+          } catch {
+            return null;
+          }
+        });
+        imageUrls = (await Promise.all(imagePromises)).filter(url => url !== null);
+      }
+      // Force update vehicleDetails signal for Angular reactivity
+      const details = this.vehicleDetails();
+      if (details) {
+        this.vehicleDetails.set({ ...details, images: imageUrls });
+      }
+    });
+  }
 }
