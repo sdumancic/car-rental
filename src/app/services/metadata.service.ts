@@ -38,6 +38,10 @@ export class MetadataService {
     this.appStore.setVehicleStatuses(statuses || []);
   }
 
+  async fetchEquipments() {
+    return await this.http.get<any[]>(`http://localhost:8090/v1/equipment`).toPromise();
+  }
+
   async fetchAllMetadata() {
     await Promise.all([
       this.fetchMakes(),
@@ -48,4 +52,3 @@ export class MetadataService {
     ]);
   }
 }
-

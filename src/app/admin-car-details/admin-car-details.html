@@ -199,29 +199,32 @@
     </div>
   </div>
 
-  <!-- Equipment Tab Content -->
   <div *ngIf="activeTab() === 'equipment'" class="flex flex-col gap-0 overflow-y-auto flex-1">
     <div
-      *ngFor="let item of equipment(); let i = index; let last = last"
+      *ngFor="let eq of equipmentList(); let i = index; let last = last"
       class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800"
       [class.border-b-0]="last">
-      <p class="text-zinc-900 dark:text-white text-base font-medium leading-normal">{{ item.name }}</p>
+      <p class="text-zinc-900 dark:text-white text-base font-medium leading-normal">{{ eq.name }}</p>
       <label class="relative inline-flex items-center cursor-pointer">
         <input
           type="checkbox"
           class="sr-only peer"
-          [checked]="item.enabled"
+          [checked]="isEquipmentEnabled(eq.id)"
           (change)="toggleEquipment(i)"/>
         <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary dark:peer-focus:ring-primary peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-500 dark:bg-gray-600"></div>
       </label>
     </div>
   </div>
 
+
   <!-- Media Tab Content -->
   <div *ngIf="activeTab() === 'media'" class="flex flex-col flex-1 pb-20">
+    <!-- Media grid -->
     <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-4 p-4">
-      <div *ngFor="let item of mediaItems()" class="relative group">
-        <div
+      <div *ngFor="let item of vehicleMediaList()" class="relative group">
+
+        <!-- Existing Media -->
+        <div *ngIf="!item.isPlaceholder"
           class="bg-cover bg-center flex flex-col rounded-lg justify-center items-center p-4 aspect-square"
           [class.justify-end]="!item.isVideo"
           [style.background-image]="'linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 40%), url(' + item.url + ')'">
@@ -244,30 +247,31 @@
           <div *ngIf="item.isVideo" class="bg-black/50 p-3 rounded-full text-white">
             <span class="material-symbols-outlined text-3xl">play_arrow</span>
           </div>
+
+          <!-- Media type label -->
+          <div class="absolute bottom-4 left-4 w-[calc(100%-2rem)]">
+            <div class="w-full bg-gray-800/70 text-white text-xs font-semibold p-2 rounded-md text-center">
+              {{ item.type.replace('_', ' ') }}
+            </div>
+          </div>
         </div>
 
-        <!-- Media type selector -->
-        <div class="absolute bottom-4 left-4 w-[calc(100%-2rem)]">
-          <select
-            [(ngModel)]="item.type"
-            class="w-full bg-gray-800/70 text-white text-sm font-semibold p-2 rounded-md border-0 focus:ring-0 focus:outline-none appearance-none">
-            <option value="COVER_IMAGE">COVER_IMAGE</option>
-            <option value="FRONT_IMAGE">FRONT_IMAGE</option>
-            <option value="BACK_IMAGE">BACK_IMAGE</option>
-            <option value="SIDE_IMAGE">SIDE_IMAGE</option>
-            <option value="INTERIOR_IMAGE">INTERIOR_IMAGE</option>
-            <option value="EXTERIOR_VIDEO">EXTERIOR_VIDEO</option>
-            <option value="INTERIOR_VIDEO">INTERIOR_VIDEO</option>
-          </select>
+        <!-- Placeholder for missing media -->
+        <div *ngIf="item.isPlaceholder"
+          (click)="onPlaceholderClick(item.type)"
+          class="bg-zinc-100 dark:bg-zinc-800 border-2 border-dashed border-zinc-300 dark:border-zinc-600 rounded-lg flex flex-col justify-center items-center p-4 aspect-square cursor-pointer hover:border-primary hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">
+
+          <!-- Add icon -->
+          <span class="material-symbols-outlined text-4xl text-zinc-400 dark:text-zinc-500 mb-2">
+            {{ item.isVideo ? 'videocam' : 'add_photo_alternate' }}
+          </span>
+
+          <!-- Media type label -->
+          <div class="text-zinc-600 dark:text-zinc-400 text-xs font-semibold text-center">
+            {{ item.type.replace('_', ' ') }}
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Floating Add Button -->
-    <div class="fixed bottom-5 right-5">
-      <button class="flex items-center justify-center rounded-full h-16 w-16 bg-primary text-white shadow-lg hover:bg-primary/90 transition-colors">
-        <span class="material-symbols-outlined text-3xl">add</span>
-      </button>
     </div>
   </div>
 </div>

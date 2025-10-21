@@ -27,14 +27,6 @@ interface EquipmentItem {
   enabled: boolean;
 }
 
-interface MediaItem {
-  id: number;
-  url: string;
-  type: 'COVER_IMAGE' | 'FRONT_IMAGE' | 'BACK_IMAGE' | 'SIDE_IMAGE' | 'INTERIOR_IMAGE' | 'EXTERIOR_VIDEO' | 'INTERIOR_VIDEO';
-  isVideo: boolean;
-  isCover: boolean;
-}
-
 @Component({
   selector: 'app-admin-car-details',
   standalone: true,
@@ -71,16 +63,19 @@ export class AdminCarDetailsComponent {
     { name: 'Traction Control', enabled: true }
   ]);
 
-  // Media items
-  mediaItems = signal<MediaItem[]>([
-    { id: 1, url: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop', type: 'COVER_IMAGE', isVideo: false, isCover: true },
-    { id: 2, url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop', type: 'FRONT_IMAGE', isVideo: false, isCover: false },
-    { id: 3, url: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop', type: 'BACK_IMAGE', isVideo: false, isCover: false },
-    { id: 4, url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&h=600&fit=crop', type: 'SIDE_IMAGE', isVideo: false, isCover: false },
-    { id: 5, url: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop', type: 'INTERIOR_IMAGE', isVideo: false, isCover: false },
-    { id: 6, url: 'https://www.youtube.com/embed/tgbNymZ7vqY', type: 'EXTERIOR_VIDEO', isVideo: true, isCover: false },
-    { id: 7, url: 'https://www.youtube.com/embed/tgbNymZ7vqY', type: 'INTERIOR_VIDEO', isVideo: true, isCover: false }
-  ]);
+  // vehicleMediaList will be used for all media display and actions
+  vehicleMediaList = signal<any[]>([]);
+
+  // All possible media types
+  readonly mediaTypes = [
+    { type: 'COVER_IMAGE', label: 'Cover Image', isVideo: false },
+    { type: 'FRONT_IMAGE', label: 'Front Image', isVideo: false },
+    { type: 'BACK_IMAGE', label: 'Back Image', isVideo: false },
+    { type: 'SIDE_IMAGE', label: 'Side Image', isVideo: false },
+    { type: 'INTERIOR_IMAGE', label: 'Interior Image', isVideo: false },
+    { type: 'EXTERIOR_VIDEO', label: 'Exterior Video', isVideo: true },
+    { type: 'INTERIOR_VIDEO', label: 'Interior Video', isVideo: true }
+  ];
 
   // Dropdown options from metadata
   makeOptions: string[] = [];
@@ -93,6 +88,9 @@ export class AdminCarDetailsComponent {
   // Dark mode
   isDarkModeActive = computed(() => this.themeService.darkMode());
 
+  equipmentList = signal<any[]>([]);
+  carEquipmentIds = signal<Set<number>>(new Set());
+
   constructor(
     private router: Router,
     private location: Location,
@@ -100,7 +98,8 @@ export class AdminCarDetailsComponent {
     private activatedRoute: ActivatedRoute,
     private metadataService: MetadataService,
     private appStore: AppStore,
-    private vehicleService: VehicleService // dodano
+    private vehicleService: VehicleService,
+    private route: ActivatedRoute
   ) {
     const nav = this.router.getCurrentNavigation();
     const state = nav?.extras?.state as { vehicleDetails?: any };
@@ -131,6 +130,23 @@ export class AdminCarDetailsComponent {
       }
       this.vehicleDetails.set({ ...defaults, ...incoming, images: incoming.images ?? [] });
     }
+    this.loadEquipmentData();
+  }
+
+  async loadEquipmentData() {
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    // Fetch all equipment
+    const allEquipment = await this.metadataService.fetchEquipments();
+    this.equipmentList.set(allEquipment || []);
+    // Fetch car's equipment
+    this.vehicleService.getVehicleEquipment(vehicleId).subscribe(equipments => {
+      // Assume returned array of equipment objects with id property
+      this.carEquipmentIds.set(new Set(equipments.map(e => e.id)));
+    });
+  }
+
+  isEquipmentEnabled(equipmentId: number): boolean {
+    return this.carEquipmentIds().has(equipmentId);
   }
 
   async ngOnInit() {
@@ -202,12 +218,79 @@ export class AdminCarDetailsComponent {
     }
   }
 
+  async loadVehicleMedia() {
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    this.vehicleService.getVehicleMedia(vehicleId).subscribe(async media => {
+      const existingMediaTypes = new Set<string>();
+      const mediaList: any[] = [];
+
+      // Download existing media items
+      if (media && media.length > 0) {
+        const mediaPromises = media.map(async (item: any) => {
+          try {
+            existingMediaTypes.add(item.vehicleMediaType);
+            const blob = await this.vehicleService.downloadVehicleMedia(vehicleId, item.id).toPromise();
+            const url = window.URL.createObjectURL(blob!);
+
+            return {
+              id: item.id,
+              type: item.vehicleMediaType,
+              fileName: item.fileName,
+              fileType: item.fileType,
+              url: url,
+              isVideo: item.vehicleMediaType === 'EXTERIOR_VIDEO' || item.vehicleMediaType === 'INTERIOR_VIDEO',
+              isCover: item.vehicleMediaType === 'COVER_IMAGE',
+              isPlaceholder: false
+            };
+          } catch (error) {
+            console.error(`Failed to download media ${item.id}:`, error);
+            return null;
+          }
+        });
+
+        const downloadedMedia = await Promise.all(mediaPromises);
+        mediaList.push(...downloadedMedia.filter(item => item !== null));
+      }
+
+      // Add placeholders for missing media types
+      this.mediaTypes.forEach(mediaType => {
+        if (!existingMediaTypes.has(mediaType.type)) {
+          mediaList.push({
+            id: null,
+            type: mediaType.type,
+            label: mediaType.label,
+            isVideo: mediaType.isVideo,
+            isPlaceholder: true,
+            isCover: false
+          });
+        }
+      });
+
+      this.vehicleMediaList.set(mediaList);
+    });
+  }
+
+  async downloadMedia(media: any) {
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    this.vehicleService.downloadVehicleMedia(vehicleId, media.id).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = media.fileName || 'media';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
   goBack() {
     this.location.back();
   }
 
   setActiveTab(tab: 'details' | 'equipment' | 'media') {
     this.activeTab.set(tab);
+    if (tab === 'media') {
+      this.loadVehicleMedia();
+    }
   }
 
   selectImage(index: number) {
@@ -235,17 +318,62 @@ export class AdminCarDetailsComponent {
   }
 
   deleteMediaItem(id: number) {
-    const items = this.mediaItems().filter(item => item.id !== id);
-    this.mediaItems.set(items);
+    const items = this.vehicleMediaList().filter(item => item.id !== id);
+    this.vehicleMediaList.set(items);
   }
 
   setCoverImage(id: number) {
-    const items = this.mediaItems().map(item => {
+    const items = this.vehicleMediaList().map(item => {
       item.isCover = item.id === id;
       return item;
     });
-    this.mediaItems.set(items);
+    this.vehicleMediaList.set(items);
   }
 
+  async onPlaceholderClick(mediaType: string) {
+    // Create a hidden file input element
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = mediaType.includes('VIDEO') ? 'video/*' : 'image/*';
+
+    input.onchange = async (event: any) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+
+      // Extract file extension
+      const fileExtension = file.name.split('.').pop() || '';
+      const fileName = file.name;
+
+      try {
+        // Step 1: Create media metadata
+        const mediaData = {
+          vehicleId: vehicleId,
+          fileName: fileName,
+          fileType: fileExtension,
+          vehicleMediaType: mediaType
+        };
+
+        const response = await this.vehicleService.createVehicleMedia(vehicleId, mediaData).toPromise();
+
+        if (response && response.id) {
+          // Step 2: Upload the actual file
+          await this.vehicleService.uploadVehicleMediaFile(vehicleId, response.id, file, fileName).toPromise();
+
+          // Step 3: Reload media to show the newly uploaded file
+          this.loadVehicleMedia();
+
+          console.log('Media uploaded successfully');
+        }
+      } catch (error) {
+        console.error('Failed to upload media:', error);
+        alert('Failed to upload media. Please try again.');
+      }
+    };
+
+    // Trigger file selection
+    input.click();
+  }
 
 }
