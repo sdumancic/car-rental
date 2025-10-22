@@ -167,7 +167,7 @@
     <button
       (click)="onSubmit()"
       class="w-full bg-primary text-white font-bold py-4 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
-      Pay ${{ paymentData().totalAmount }}
+      Pay ${{ totalAmount().toFixed(2) }}
     </button>
   </footer>
 </div>

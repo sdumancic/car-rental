@@ -106,25 +106,36 @@ export class AdminCarOverviewComponent implements OnInit {
     };
     try {
       const response = await this.vehicleService.searchVehicles(params).toPromise();
-      const vehicles = (response.data || []).map((v: any) => ({
-        id: v.id,
-        make: v.make,
-        model: v.model,
-        year: v.year,
-        status: v.status,
-        imageUrl: v.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
-        vin: v.vin,
-        licensePlate: v.licensePlate,
-        vehicleType: v.vehicleType,
-        passengers: v.passengers,
-        doors: v.doors,
-        fuelType: v.fuelType,
-        transmission: v.transmission,
-        active: v.active
-      }));
+      console.log('Admin vehicle search response:', response);
+
+      const vehicles = (response.data || []).map((item: any) => {
+        // Extract vehicle from the response item
+        const v = item.vehicle || item;
+
+        return {
+          id: v.id,
+          make: v.make,
+          model: v.model,
+          year: v.year,
+          status: v.status || (item.available ? 'Available' : 'Rented'),
+          imageUrl: v.imageUrl || 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
+          vin: v.vin,
+          licensePlate: v.licensePlate,
+          vehicleType: v.vehicleType,
+          passengers: v.passengers,
+          doors: v.doors,
+          fuelType: v.fuelType,
+          transmission: v.transmission,
+          active: v.active,
+          available: item.available
+        };
+      });
+
       this.vehicles.set(vehicles);
       this.totalRecords.set(response.metadata?.totalRecords ?? 0);
       this.size.set(response.metadata?.size ?? 10);
+
+      console.log('Mapped vehicles:', vehicles);
     } catch (error) {
       console.error('Vehicle search failed', error);
       this.vehicles.set([]);

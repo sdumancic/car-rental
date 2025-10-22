@@ -23,11 +23,15 @@ export const routes: Routes = [
     loadComponent: () => import('./reservation-details/reservation-details.component').then(m => m.ReservationDetailsComponent)
   },
   {
+    path: 'reservation-details/:id',
+    loadComponent: () => import('./reservation-details/reservation-details.component').then(m => m.ReservationDetailsComponent)
+  },
+  {
     path: 'payment',
     loadComponent: () => import('./payment/payment.component').then(m => m.PaymentComponent)
   },
   {
-    path: 'return-car',
+    path: 'return-car/:id',
     loadComponent: () => import('./return-car/return-car.component').then(m => m.ReturnCarComponent)
   },
   {

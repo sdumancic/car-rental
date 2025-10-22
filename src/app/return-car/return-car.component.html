@@ -48,13 +48,10 @@
             <button
               type="button"
               (click)="onAddPhoto('front')"
-              [class.bg-green-100]="hasPhoto('front')"
-              [class.dark:bg-green-900]="hasPhoto('front')"
-              [class.text-green-600]="hasPhoto('front')"
-              [class.dark:text-green-400]="hasPhoto('front')"
-              [class.bg-primary/20]="!hasPhoto('front')"
-              [class.dark:bg-primary/30]="!hasPhoto('front')"
-              [class.text-primary]="!hasPhoto('front')"
+              [ngClass]="{
+                'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400': hasPhoto('front'),
+                'bg-primary/20 dark:bg-primary/30 text-primary': !hasPhoto('front')
+              }"
               class="font-bold py-1 px-4 rounded-full mt-2 text-sm transition-colors hover:opacity-80">
               {{ hasPhoto('front') ? '✓ Added' : 'Add Photo' }}
             </button>
@@ -71,13 +68,10 @@
             <button
               type="button"
               (click)="onAddPhoto('back')"
-              [class.bg-green-100]="hasPhoto('back')"
-              [class.dark:bg-green-900]="hasPhoto('back')"
-              [class.text-green-600]="hasPhoto('back')"
-              [class.dark:text-green-400]="hasPhoto('back')"
-              [class.bg-primary/20]="!hasPhoto('back')"
-              [class.dark:bg-primary/30]="!hasPhoto('back')"
-              [class.text-primary]="!hasPhoto('back')"
+              [ngClass]="{
+                'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400': hasPhoto('back'),
+                'bg-primary/20 dark:bg-primary/30 text-primary': !hasPhoto('back')
+              }"
               class="font-bold py-1 px-4 rounded-full mt-2 text-sm transition-colors hover:opacity-80">
               {{ hasPhoto('back') ? '✓ Added' : 'Add Photo' }}
             </button>
@@ -94,13 +88,10 @@
             <button
               type="button"
               (click)="onAddPhoto('leftSide')"
-              [class.bg-green-100]="hasPhoto('leftSide')"
-              [class.dark:bg-green-900]="hasPhoto('leftSide')"
-              [class.text-green-600]="hasPhoto('leftSide')"
-              [class.dark:text-green-400]="hasPhoto('leftSide')"
-              [class.bg-primary/20]="!hasPhoto('leftSide')"
-              [class.dark:bg-primary/30]="!hasPhoto('leftSide')"
-              [class.text-primary]="!hasPhoto('leftSide')"
+              [ngClass]="{
+                'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400': hasPhoto('leftSide'),
+                'bg-primary/20 dark:bg-primary/30 text-primary': !hasPhoto('leftSide')
+              }"
               class="font-bold py-1 px-4 rounded-full mt-2 text-sm transition-colors hover:opacity-80">
               {{ hasPhoto('leftSide') ? '✓ Added' : 'Add Photo' }}
             </button>
@@ -117,13 +108,10 @@
             <button
               type="button"
               (click)="onAddPhoto('rightSide')"
-              [class.bg-green-100]="hasPhoto('rightSide')"
-              [class.dark:bg-green-900]="hasPhoto('rightSide')"
-              [class.text-green-600]="hasPhoto('rightSide')"
-              [class.dark:text-green-400]="hasPhoto('rightSide')"
-              [class.bg-primary/20]="!hasPhoto('rightSide')"
-              [class.dark:bg-primary/30]="!hasPhoto('rightSide')"
-              [class.text-primary]="!hasPhoto('rightSide')"
+              [ngClass]="{
+                'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400': hasPhoto('rightSide'),
+                'bg-primary/20 dark:bg-primary/30 text-primary': !hasPhoto('rightSide')
+              }"
               class="font-bold py-1 px-4 rounded-full mt-2 text-sm transition-colors hover:opacity-80">
               {{ hasPhoto('rightSide') ? '✓ Added' : 'Add Photo' }}
             </button>
@@ -140,13 +128,10 @@
             <button
               type="button"
               (click)="onAddPhoto('mileage')"
-              [class.bg-green-100]="hasPhoto('mileage')"
-              [class.dark:bg-green-900]="hasPhoto('mileage')"
-              [class.text-green-600]="hasPhoto('mileage')"
-              [class.dark:text-green-400]="hasPhoto('mileage')"
-              [class.bg-primary/20]="!hasPhoto('mileage')"
-              [class.dark:bg-primary/30]="!hasPhoto('mileage')"
-              [class.text-primary]="!hasPhoto('mileage')"
+              [ngClass]="{
+                'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400': hasPhoto('mileage'),
+                'bg-primary/20 dark:bg-primary/30 text-primary': !hasPhoto('mileage')
+              }"
               class="font-bold py-1 px-4 rounded-full mt-2 text-sm transition-colors hover:opacity-80">
               {{ hasPhoto('mileage') ? '✓ Added' : 'Add Photo' }}
             </button>
@@ -199,6 +184,15 @@
 </div>
 
 <!-- Success Dialog -->
+<div *ngIf="showSuccessDialog()" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white dark:bg-zinc-900 p-8 rounded-lg shadow-lg text-center max-w-md mx-4">
+    <svg class="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Car Returned Successfully!</h2>
+    <p class="mb-6 text-gray-600 dark:text-gray-400">Your reservation status has been updated to COMPLETED.</p>
+  </div>
+</div>
 <div *ngIf="showSuccessDialog()" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
   <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl">
     <div class="flex flex-col items-center gap-6">

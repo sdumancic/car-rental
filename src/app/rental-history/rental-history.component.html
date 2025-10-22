@@ -22,8 +22,14 @@
 
     <!-- Main content -->
     <main class="p-4 space-y-6">
+      <!-- Loading state -->
+      <div *ngIf="isLoading()" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-primary border-r-transparent"></div>
+        <p class="mt-4 text-gray-500 dark:text-gray-400">Loading rental history...</p>
+      </div>
+
       <!-- Header with Sort and Filter -->
-      <div class="flex items-center justify-between">
+      <div *ngIf="!isLoading()" class="flex items-center justify-between">
         <h2 class="text-2xl font-bold">Past Rentals</h2>
         <div class="flex items-center gap-2">
           <button
@@ -46,9 +52,9 @@
       </div>
 
       <!-- Past Rentals List -->
-      <div class="space-y-4">
+      <div *ngIf="!isLoading()" class="space-y-4">
         <div
-          *ngFor="let rental of pastRentals"
+          *ngFor="let rental of pastRentals()"
           (click)="onRentalClick(rental)"
           class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden flex items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
           <img
@@ -70,7 +76,7 @@
         </div>
 
         <!-- Empty state (if no rentals) -->
-        <div *ngIf="pastRentals.length === 0" class="text-center py-12">
+        <div *ngIf="!isLoading() && pastRentals().length === 0" class="text-center py-12">
           <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>

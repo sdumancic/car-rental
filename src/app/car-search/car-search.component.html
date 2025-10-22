@@ -24,20 +24,6 @@
       <!-- ...existing main content... -->
       <h2 class="text-3xl font-bold">Find your perfect ride</h2>
       <form class="mt-6 space-y-4" (ngSubmit)="onSearch()">
-        <!-- Location input -->
-        <div>
-          <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="pickup">Pick up location</label>
-          <div class="relative mt-2">
-            <input class="form-input" id="pickup" [(ngModel)]="location" name="location" type="text" placeholder="Enter a location" />
-            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-            </span>
-          </div>
-        </div>
-        <!-- ...other form fields and sections... -->
         <!-- Date selection grid -->
         <div class="grid grid-cols-2 gap-4">
           <div>
@@ -53,76 +39,114 @@
             </div>
           </div>
         </div>
+        <!-- Car Type Filter -->
+        <div>
+          <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2 block">Car Type</label>
+          <div class="flex flex-wrap gap-2">
+            <button (click)="selectedCarType = ''"
+                    [ngClass]="{'bg-primary/10 text-primary': selectedCarType === '', 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300': selectedCarType !== ''}"
+                    class="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium">
+              Any
+            </button>
+            <button *ngFor="let type of vehicleTypes()"
+                    (click)="selectedCarType = type"
+                    [ngClass]="{'bg-primary/10 text-primary': selectedCarType === type, 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300': selectedCarType !== type}"
+                    class="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium">
+              {{ type }}
+            </button>
+          </div>
+        </div>
         <button type="submit" class="w-full rounded-xl bg-primary py-3.5 text-base font-bold text-white shadow-lg shadow-primary/30">
           Search
         </button>
       </form>
-      <!-- Filters -->
-      <section class="mt-8">
-        <h3 class="text-lg font-bold">Filters</h3>
-        <div class="mt-3 flex flex-wrap gap-2">
-          <button *ngFor="let filter of ['Car type', 'Price', 'Availability']"
-                  (click)="toggleFilter(filter.toLowerCase())"
-                  [ngClass]="{
-                    'bg-primary/10 text-primary': getActiveFilter() === filter.toLowerCase(),
-                    'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300': getActiveFilter() !== filter.toLowerCase()
-                  }"
-                  class="flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium">
-            {{filter}}
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-      </section>
+
       <!-- Car listings -->
       <section class="mt-6 space-y-4">
-        <div *ngFor="let car of getCars()"
-             class="rounded-xl bg-white p-4 shadow-sm dark:bg-zinc-800/50">
-          <div
-            class="flex items-start gap-5 rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-md shadow-black/10 transition hover:shadow-lg hover:shadow-black/20"
-          >
-            <!-- Car image -->
-            <div class="flex-shrink-0">
-              <img
-                [src]="car.imageUrl"
-                [alt]="car.type"
-                class="h-24 w-36 rounded-xl object-cover ring-1 ring-zinc-200 dark:ring-zinc-800"
-              />
-            </div>
+        <!-- Loading state -->
+        <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-12">
+          <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-solid border-primary border-r-transparent"></div>
+          <p class="mt-4 text-gray-600 dark:text-gray-400 text-center">Searching for available vehicles...</p>
+        </div>
 
-            <!-- Car details -->
-            <div class="flex flex-1 flex-col justify-between">
-              <div>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {{ car.seats }} seats · {{ car.bags }} bags
-                </p>
-                <p class="mt-1 text-xl font-semibold text-zinc-900 dark:text-white">
-                  {{ car.type }}
-                </p>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                  {{ car.model }}
-                </p>
+        <!-- Car listings - only show when not loading -->
+        <div *ngIf="!isLoading() && getCars().length > 0">
+          <div *ngFor="let car of getCars()"
+               class="rounded-xl bg-white p-4 shadow-sm dark:bg-zinc-800/50"
+               [class.opacity-60]="car.available === false">
+            <div
+              [ngClass]="{
+                'hover:shadow-lg hover:shadow-black/20': car.available !== false
+              }"
+              class="flex items-start gap-5 rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-md shadow-black/10 transition"
+            >
+              <!-- Car image -->
+              <div class="flex-shrink-0 relative">
+                <img
+                  [src]="car.imageUrl"
+                  [alt]="car.type"
+                  class="h-24 w-36 rounded-xl object-cover ring-1 ring-zinc-200 dark:ring-zinc-800"
+                  [class.grayscale]="car.available === false"
+                />
+                <!-- Not Available badge -->
+                <div *ngIf="car.available === false"
+                     class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                  Not Available
+                </div>
               </div>
 
-              <div class="mt-3 flex items-center justify-between">
-                <p class="text-2xl font-bold text-zinc-900 dark:text-white">
-                  ${{ car.price }}
-                  <span class="text-sm font-normal text-zinc-500 dark:text-zinc-400"
-                  >/day</span
-                  >
-                </p>
+              <!-- Car details -->
+              <div class="flex flex-1 flex-col justify-between">
+                <div>
+                  <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {{ car.seats }} seats · {{ car.bags }} bags
+                  </p>
+                  <p class="mt-1 text-xl font-semibold text-zinc-900 dark:text-white">
+                    {{ car.type }}
+                  </p>
+                  <p class="text-sm text-zinc-500 dark:text-zinc-400">
+                    {{ car.model }}
+                  </p>
+                  <!-- Availability status message -->
+                  <p *ngIf="car.available === false" class="mt-2 text-sm font-medium text-red-600 dark:text-red-400">
+                    Not available for selected dates
+                  </p>
+                </div>
 
-                <button
-                  (click)="selectCar(car)"
-                  class="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary/30 hover:bg-primary/90 active:scale-95 transition-all"
-                >
-                  Select Car
-                </button>
+                <div class="mt-3 flex items-center justify-between">
+                  <p class="text-2xl font-bold text-zinc-900 dark:text-white"
+                     [class.text-zinc-400]="car.available === false"
+                     [class.dark:text-zinc-600]="car.available === false">
+                    ${{ car.price }}
+                    <span class="text-sm font-normal text-zinc-500 dark:text-zinc-400"
+                    >/day</span
+                    >
+                  </p>
+
+                  <button
+                    (click)="car.available !== false && selectCar(car)"
+                    [disabled]="car.available === false"
+                    [ngClass]="{
+                      'bg-primary shadow-primary/30 hover:bg-primary/90 active:scale-95': car.available !== false,
+                      'bg-zinc-400 dark:bg-zinc-600 cursor-not-allowed opacity-50': car.available === false
+                    }"
+                    class="rounded-xl px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all"
+                  >
+                    {{ car.available === false ? 'Unavailable' : 'Select Car' }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
+        <!-- No results state -->
+        <div *ngIf="!isLoading() && getCars().length === 0" class="flex flex-col items-center justify-center py-12">
+          <svg class="h-16 w-16 text-gray-400 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-gray-600 dark:text-gray-400 text-center">No vehicles found for your search criteria.</p>
+          <p class="text-sm text-gray-500 dark:text-gray-500 text-center mt-2">Try adjusting your dates or filters.</p>
         </div>
       </section>
     </main>

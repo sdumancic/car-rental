@@ -8,10 +8,30 @@ export class VehicleService {
 
   constructor(private http: HttpClient) {}
 
-  searchVehicles(params: any): Observable<any> {
-    // Remove undefined values
-    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
-    return this.http.get<any>(this.baseUrl, { params });
+  searchVehicles(params: {
+    make?: string;
+    model?: string;
+    year?: number;
+    vehicleType?: string;
+    passengers?: number;
+    doors?: number;
+    fuelType?: string;
+    transmission?: string;
+    sort?: string;
+    page?: number;
+    size?: number;
+    reservationStart?: string;
+    reservationEnd?: string;
+  }): Observable<any> {
+    // Remove undefined and empty values
+    const cleanParams: any = {};
+    Object.keys(params).forEach(key => {
+      const value = (params as any)[key];
+      if (value !== undefined && value !== null && value !== '') {
+        cleanParams[key] = value;
+      }
+    });
+    return this.http.get<any>(this.baseUrl, { params: cleanParams });
   }
 
   createVehicle(vehicle: any): Observable<any> {
@@ -20,6 +40,16 @@ export class VehicleService {
 
   getVehicleById(id: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/${id}`);
+  }
+
+  getVehiclePricing(vehicleId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${vehicleId}/pricing/active`);
+  }
+
+  calculateVehiclePricing(vehicleId: number, days: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${vehicleId}/pricing/calculate`, {
+      params: { days: days.toString() }
+    });
   }
 
   getVehicleEquipment(vehicleId: number): Observable<any[]> {
@@ -63,5 +93,58 @@ export class VehicleService {
     return this.http.put(`http://localhost:8090/v1/vehicles/${vehicleId}`, vehicleData, {
       headers: { 'Content-Type': 'application/json' }
     });
+  }
+
+  createReservation(reservationData: {
+    userId: number;
+    vehicleId: number;
+    startDate: string;
+    endDate: string;
+  }): Observable<any> {
+    return this.http.post<any>('http://localhost:8090/v1/reservations', reservationData, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  payReservation(reservationId: number, reservation: any): Observable<any> {
+    return this.http.post<any>(`http://localhost:8090/v1/reservations/${reservationId}/payment`, reservation, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
+  getUserReservations(params: {
+    userId: number;
+    status?: string;
+    page?: number;
+    size?: number;
+  }): Observable<any> {
+    const cleanParams: any = {};
+    Object.keys(params).forEach(key => {
+      const value = (params as any)[key];
+      if (value !== undefined && value !== null && value !== '') {
+        cleanParams[key] = value;
+      }
+    });
+    return this.http.get<any>('http://localhost:8090/v1/reservations', { params: cleanParams });
+  }
+
+  completeReservation(reservationId: number): Observable<any> {
+    return this.http.post<any>(`http://localhost:8090/v1/reservations/${reservationId}/complete`, {});
+  }
+
+  getRentalHistory(params: {
+    userId: number;
+    page?: number;
+    size?: number;
+    sort?: string;
+  }): Observable<any> {
+    const cleanParams: any = {};
+    Object.keys(params).forEach(key => {
+      const value = (params as any)[key];
+      if (value !== undefined && value !== null && value !== '') {
+        cleanParams[key] = value;
+      }
+    });
+    return this.http.get<any>('http://localhost:8090/v1/reservations', { params: cleanParams });
   }
 }

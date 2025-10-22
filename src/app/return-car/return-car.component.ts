@@ -1,9 +1,9 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AppStore } from '../services/app.store';
-import { ThemeService } from '../services/theme.service'
+import { Router, ActivatedRoute } from '@angular/router';
+import { ThemeService } from '../services/theme.service';
+import { VehicleService } from '../services/vehicle.service';
 
 @Component({
   selector: 'app-return-car',
@@ -31,11 +31,18 @@ export class ReturnCarComponent {
   // Create a computed signal for dark mode state
   isDarkModeActive = computed(() => this.themeService.darkMode());
 
+  reservationId: string | null = null;
+
   constructor(
     public themeService: ThemeService,
     private router: Router,
-    private location: Location
-  ) {}
+    private location: Location,
+    private route: ActivatedRoute,
+    private vehicleService: VehicleService
+  ) {
+    this.reservationId = this.route.snapshot.paramMap.get('id');
+    console.log('Return Car Component - Reservation ID:', this.reservationId);
+  }
 
   goBack() {
     this.location.back();
@@ -63,18 +70,23 @@ export class ReturnCarComponent {
     return this.photos[position] !== null;
   }
 
-  onSubmit() {
-    console.log('Submitting return car form...');
-    console.log('Condition report:', this.conditionReport);
-    console.log('Photos:', this.photos);
-
-    // Show success dialog
-    this.showSuccessDialog.set(true);
-
-    // Redirect to my-rentals after 2 seconds
-    setTimeout(() => {
-      this.router.navigate(['/my-rentals']);
-    }, 2000);
+  async onSubmit() {
+    if (!this.reservationId) {
+      alert('Reservation ID not found.');
+      return;
+    }
+    try {
+      console.log('Submitting return for reservation ID:', this.reservationId);
+      await this.vehicleService.completeReservation(Number(this.reservationId)).toPromise();
+      console.log('Reservation completed successfully');
+      this.showSuccessDialog.set(true);
+      setTimeout(() => {
+        this.router.navigate(['/my-rentals']);
+      }, 2000);
+    } catch (error) {
+      console.error('Error completing reservation:', error);
+      alert('Failed to complete reservation. Please try again.');
+    }
   }
 
   navigateToSearch() {

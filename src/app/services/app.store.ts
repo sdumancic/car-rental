@@ -24,12 +24,14 @@ export interface UserProfile {
 }
 
 export interface Car {
+  id?: number;
   seats: number;
   bags: number;
   type: string;
   model: string;
   price: number;
   imageUrl?: string;
+  available?: boolean;
 }
 
 export interface Rental {
@@ -40,6 +42,36 @@ export interface Rental {
   pickupLocation: string;
   returnDate: string;
   returnLocation: string;
+}
+
+export interface Reservation {
+  id: number;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    mobileNumber: string;
+    billingAddress: {
+      street: string;
+      houseNumber: string;
+      zipcode: string;
+      city: string;
+    };
+    homeAddress: {
+      street: string;
+      houseNumber: string;
+      zipcode: string;
+      city: string;
+    };
+  };
+  vehicle: any;
+  startDate: string;
+  endDate: string;
+  price: number;
+  status: string;
 }
 
 export interface PaymentData {
@@ -144,6 +176,10 @@ export class AppStore {
     returnLocation: 'JFK Airport'
   });
   activeRental = this._activeRental.asReadonly();
+
+  // Current reservation state
+  private _currentReservation = signal<Reservation | null>(null);
+  currentReservation = this._currentReservation.asReadonly();
 
   // Payment data state
   private _paymentData = signal<PaymentData>({
@@ -320,5 +356,10 @@ export class AppStore {
   }
   setVehicleStatuses(statuses: string[]) {
     this._vehicleStatuses.set(statuses);
+  }
+
+  // Reservation methods
+  setCurrentReservation(reservation: Reservation): void {
+    this._currentReservation.set(reservation);
   }
 }

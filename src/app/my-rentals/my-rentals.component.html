@@ -18,51 +18,91 @@
 
     <!-- Main content -->
     <main class="p-4 space-y-6">
-      <!-- Active Rental Section -->
-      <div *ngIf="activeRental(); else noRental">
-        <h2 class="text-2xl font-bold mb-4">Active Rental</h2>
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
-          <img
-            [alt]="activeRental().carName"
-            class="w-full h-48 object-cover"
-            [src]="activeRental().imageUrl"
-          />
-          <div class="p-4">
-            <h3 class="text-xl font-bold">{{ activeRental().carName }}</h3>
-            <p class="text-gray-500 dark:text-gray-400">{{ activeRental().carType }}</p>
-            <!-- Pickup and Return Info -->
-            <div class="mt-4 flex justify-between items-start text-sm">
-              <div>
-                <p class="font-semibold">Pick-up</p>
-                <p>{{ activeRental().pickupDate }}</p>
-                <p class="text-gray-500 dark:text-gray-400">{{ activeRental().pickupLocation }}</p>
-              </div>
-              <div class="text-right">
-                <p class="font-semibold">Return</p>
-                <p>{{ activeRental().returnDate }}</p>
-                <p class="text-gray-500 dark:text-gray-400">{{ activeRental().returnLocation }}</p>
-              </div>
-            </div>
+      <!-- Loading state -->
+      <div *ngIf="isLoading()" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-primary border-r-transparent"></div>
+        <p class="mt-4 text-gray-500 dark:text-gray-400">Loading your rentals...</p>
+      </div>
 
-            <div class="mt-4 grid grid-cols-2 gap-2">
-              <button class="w-full bg-primary text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2"
-                      (click)="onReturnCar()">
-                <span class="material-symbols-outlined text-xl">directions_car</span>
-                <span>Return Car</span>
-              </button>
-              <button class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark text-foreground-light dark:text-foreground-dark font-bold h-12 rounded-xl flex items-center justify-center gap-2"
-                      (click)="onViewDetails()">
-                <span class="material-symbols-outlined text-xl">receipt_long</span>
-                <span>Details</span>
-              </button>
-            </div>
+      <!-- Reservations List -->
+      <div *ngIf="!isLoading() && reservations().length > 0">
+        <h2 class="text-2xl font-bold mb-4">Active Rentals</h2>
+        <div class="space-y-4">
+          <div *ngFor="let reservation of reservations()"
+               class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+            <img
+              [alt]="reservation.vehicle.make + ' ' + reservation.vehicle.model"
+              class="w-full h-48 object-cover"
+              [src]="reservation.imageUrl"
+            />
+            <div class="p-4">
+              <h3 class="text-xl font-bold">{{ reservation.vehicle.make }} {{ reservation.vehicle.model }}</h3>
+              <p class="text-gray-500 dark:text-gray-400">{{ reservation.vehicle.year }} · {{ reservation.vehicle.vehicleType }}</p>
 
+              <!-- Reservation Info -->
+              <div class="mt-4 space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600 dark:text-gray-400">Reservation ID:</span>
+                  <span class="font-medium">#{{ reservation.id }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600 dark:text-gray-400">Status:</span>
+                  <span class="font-medium px-2 py-1 rounded text-xs"
+                        [class.bg-green-100]="reservation.status === 'CONFIRMED'"
+                        [class.text-green-800]="reservation.status === 'CONFIRMED'"
+                        [class.dark:bg-green-900/30]="reservation.status === 'CONFIRMED'"
+                        [class.dark:text-green-400]="reservation.status === 'CONFIRMED'"
+                        [class.bg-yellow-100]="reservation.status === 'PENDING'"
+                        [class.text-yellow-800]="reservation.status === 'PENDING'"
+                        [class.dark:bg-yellow-900/30]="reservation.status === 'PENDING'"
+                        [class.dark:text-yellow-400]="reservation.status === 'PENDING'">
+                    {{ reservation.status }}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600 dark:text-gray-400">Price:</span>
+                  <span class="font-bold text-primary">${{ reservation.price.toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <!-- Pickup and Return Info -->
+              <div class="mt-4 flex justify-between items-start text-sm">
+                <div>
+                  <p class="font-semibold">Pick-up</p>
+                  <p>{{ reservation.startDate | date: 'MMM dd, yyyy' }}</p>
+                  <p class="text-gray-500 dark:text-gray-400">{{ reservation.startDate | date: 'h:mm a' }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-semibold">Return</p>
+                  <p>{{ reservation.endDate | date: 'MMM dd, yyyy' }}</p>
+                  <p class="text-gray-500 dark:text-gray-400">{{ reservation.endDate | date: 'h:mm a' }}</p>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <button class="w-full bg-primary text-white font-bold h-12 rounded-xl flex items-center justify-center gap-2"
+                        (click)="onReturnCar(reservation.id)">
+                  <span class="material-symbols-outlined text-xl">directions_car</span>
+                  <span>Return Car</span>
+                </button>
+                <button class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark text-foreground-light dark:text-foreground-dark font-bold h-12 rounded-xl flex items-center justify-center gap-2"
+                        (click)="onViewDetails(reservation.id)">
+                  <span class="material-symbols-outlined text-xl">receipt_long</span>
+                  <span>Details</span>
+                </button>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
-      <ng-template #noRental>
-        <div class="text-center py-12 text-lg text-gray-500 dark:text-gray-400 font-semibold">No active rentals</div>
-      </ng-template>
+
+      <!-- No Rentals state -->
+      <div *ngIf="!isLoading() && reservations().length === 0"
+           class="text-center py-12 text-lg text-gray-500 dark:text-gray-400 font-semibold">
+        No active rentals
+      </div>
+
       <!-- Rental History Link -->
       <div>
         <a

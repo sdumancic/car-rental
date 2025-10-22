@@ -2,9 +2,9 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppStore } from '../services/app.store';
-import { ThemeService } from '../services/theme.service'
-import { FooterNavComponent } from '../footer-nav/footer-nav.component'
+import { ThemeService } from '../services/theme.service';
+import { FooterNavComponent } from '../footer-nav/footer-nav.component';
+import { VehicleService } from '../services/vehicle.service';
 
 interface PastRental {
   id: number;
@@ -14,6 +14,7 @@ interface PastRental {
   dateRange: string;
   location: string;
   totalCost: number;
+  status?: string;
 }
 
 @Component({
@@ -25,43 +26,97 @@ interface PastRental {
 })
 export class RentalHistoryComponent {
   // Past rentals data
-  pastRentals: PastRental[] = [
-    {
-      id: 1,
-      carName: 'Jeep Grand Cherokee',
-      carType: 'or similar',
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBms4qOd6jnxBAxT_TlbHFGG6W-APrBA6Ki879ICoJNFrIgq6XWcHEtFsT2B-sFKEsjnAjKDV4pIdqIp33HAStcvDko-C3608_9e7ruW3n2zPiMhkG3sEykrgJClZS-IlcJnhAF4Jj4jFpi3_hytjfx-mB8VZXebkMSs73YppQC_aN-hP-yvr3IMGMRLRrpMlKSJ_7sCMiK3zd52NhLuwWuXKsRlg32pvOMVMvAmxCFBET7umE_zfanMrs6KtfJFlHsZlXiT_jFH7yR',
-      dateRange: 'March 15 - 20, 2024',
-      location: 'MIA Airport',
-      totalCost: 450.78
-    },
-    {
-      id: 2,
-      carName: 'Toyota Camry',
-      carType: 'or similar',
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC5IMXfGtQrPsEF4m3IrgexmIMIfa_qnfoRTdVS1F6-BOGWcWUCV6GajgrRxRAj_QeZ5a-RUGX6GEMJh9EotB012OmdJhkNK8okxmpiCvCjLDy9tvCvK25QQRj9ALDCiOY2_NoLe1SEDydjNTLY5kkrI70ahNqmPPnTkSML8ztdIDj9JAG0JcDdciUP31lnTkWomN939VCFGZ6gOl7MytWEwn0uvjNU2u_BQIYqOmqiNPaRlIP0-R5WVeZoc9-rNJxCx0h-JGt97PS9',
-      dateRange: 'Jan 10 - 12, 2024',
-      location: 'LAX Airport',
-      totalCost: 210.50
-    },
-    {
-      id: 3,
-      carName: 'Ford Mustang',
-      carType: 'or similar',
-      imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCZch7wFD2xq4grTPfHHwaVpqO4wRfHeMAF8KvGtirdJOIWpYaXE3Kf9m38H355XctFE4K2GeMHc6SIjtE8HYCgAUN2Sfc3H67bTKcE_YoDNv5yUKwM5UPxZNvke53YqWvfKEC7A0578gSqUUQXcv1PBj1IxbRGhAdMo0YR8KP27vMvzbGfOp7MyqmRQJUPib6a8wzLVh4UgZUZb8SDnlKQpvEM2-ZiP8C1uyu2kIrIJVlQmjYpvAZu4jnf3o2_uaRVU4cKoy37zSt7',
-      dateRange: 'Nov 22 - 25, 2023',
-      location: 'JFK Airport',
-      totalCost: 320.00
-    }
-  ];
+  pastRentals = signal<PastRental[]>([]);
+  isLoading = signal<boolean>(true);
 
   // Create a computed signal for dark mode state
   isDarkModeActive = computed(() => this.themeService.darkMode());
 
   constructor(
     public themeService: ThemeService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private vehicleService: VehicleService
+  ) {
+    this.loadRentalHistory();
+  }
+
+  async loadRentalHistory() {
+    try {
+      this.isLoading.set(true);
+
+      // TODO: Zamijeniti sa pravim user ID-em iz authentication
+      const userId = 1;
+
+      const response = await this.vehicleService.getRentalHistory({
+        userId: userId,
+        page: 0,
+        size: 10,
+        sort: '-startDate'
+      }).toPromise();
+
+      console.log('Rental history response:', response);
+
+      if (response && response.data) {
+        // Dohvaćam slike za svako vozilo i transformišem podatke
+        const rentalsWithImages = [];
+
+        for (const reservation of response.data) {
+          let imageUrl = 'https://placehold.co/400x300?text=Car';
+
+          if (reservation.vehicle && reservation.vehicle.id) {
+            try {
+              // Dohvaćam media za vozilo
+              const media = await this.vehicleService.getVehicleMedia(reservation.vehicle.id).toPromise();
+
+              if (media && media.length > 0) {
+                // Prvo tražim COVER_IMAGE
+                const coverImage = media.find((m: any) => m.vehicleMediaType === 'COVER_IMAGE');
+                const imageToLoad = coverImage || media[0];
+
+                // Dohvaćam blob
+                const blob = await this.vehicleService.downloadVehicleMedia(
+                  reservation.vehicle.id,
+                  imageToLoad.id
+                ).toPromise();
+
+                if (blob) {
+                  imageUrl = window.URL.createObjectURL(blob);
+                }
+              }
+            } catch (error) {
+              console.error(`Error loading image for vehicle ${reservation.vehicle.id}:`, error);
+            }
+          }
+
+          // Format date range
+          const startDate = new Date(reservation.startDate);
+          const endDate = new Date(reservation.endDate);
+          const dateRange = `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+          rentalsWithImages.push({
+            id: reservation.id,
+            carName: `${reservation.vehicle.make} ${reservation.vehicle.model}`,
+            carType: reservation.vehicle.vehicleType || 'or similar',
+            imageUrl: imageUrl,
+            dateRange: dateRange,
+            location: 'Airport', // TODO: Add location field if available in backend
+            totalCost: reservation.price || 0,
+            status: reservation.status
+          });
+        }
+
+        this.pastRentals.set(rentalsWithImages);
+        console.log('Loaded rental history with images:', rentalsWithImages);
+      }
+
+      this.isLoading.set(false);
+    } catch (error) {
+      console.error('Error loading rental history:', error);
+      this.isLoading.set(false);
+      // Set empty array on error
+      this.pastRentals.set([]);
+    }
+  }
 
   goBack() {
     this.router.navigate(['/my-rentals']);
