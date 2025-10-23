@@ -92,6 +92,16 @@
         [class.dark:text-gray-400]="activeTab() !== 'media'">
         <p class="text-sm font-bold leading-normal">Media</p>
       </button>
+      <button
+        (click)="setActiveTab('pricing')"
+        class="flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-4 flex-1 transition-colors"
+        [class.border-b-primary]="activeTab() === 'pricing'"
+        [class.text-primary]="activeTab() === 'pricing'"
+        [class.border-b-transparent]="activeTab() !== 'pricing'"
+        [class.text-gray-500]="activeTab() !== 'pricing'"
+        [class.dark:text-gray-400]="activeTab() !== 'pricing'">
+        <p class="text-sm font-bold leading-normal">Pricing</p>
+      </button>
     </div>
   </div>
 
@@ -297,6 +307,73 @@
             {{ item.type.replace('_', ' ') }}
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing Tab Content -->
+  <div *ngIf="activeTab() === 'pricing'" class="flex flex-col flex-1 pb-20">
+    <!-- Loading state -->
+    <div *ngIf="isPricingLoading()" class="flex flex-col items-center justify-center py-12">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-primary border-r-transparent"></div>
+      <p class="mt-4 text-gray-600 dark:text-gray-400 text-center">Loading pricing categories...</p>
+    </div>
+
+    <!-- Pricing Categories List -->
+    <div *ngIf="!isPricingLoading()" class="p-4 space-y-4">
+      <div *ngFor="let category of pricingCategories()"
+           class="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden"
+           [ngClass]="{
+             'ring-2 ring-primary bg-primary/5': isActivePricingCategory(category.id)
+           }">
+
+        <!-- Category Header -->
+        <div class="flex items-center justify-between p-4 bg-white dark:bg-zinc-800">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-white">{{ category.name }}</h3>
+              <span *ngIf="isActivePricingCategory(category.id)"
+                    class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded">
+                Active
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ category.description }}</p>
+          </div>
+
+          <!-- Select Button -->
+          <button
+            *ngIf="!isActivePricingCategory(category.id)"
+            (click)="onPricingCategoryChange(category.id)"
+            class="ml-4 bg-primary text-white text-sm font-bold px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+            Select
+          </button>
+          <span *ngIf="isActivePricingCategory(category.id)"
+                class="ml-4 text-green-600 dark:text-green-400">
+            <span class="material-symbols-outlined text-3xl">check_circle</span>
+          </span>
+        </div>
+
+        <!-- Pricing Tiers -->
+        <div class="bg-gray-50 dark:bg-zinc-900 p-4">
+          <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Pricing Tiers</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div *ngFor="let tier of category.pricingTiers"
+                 class="bg-white dark:bg-zinc-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+              <div class="flex items-baseline justify-between mb-1">
+                <span class="text-xs text-gray-600 dark:text-gray-400">
+                  {{ tier.minDays }}-{{ tier.maxDays }} days
+                </span>
+                <span class="text-lg font-bold text-primary">${{ tier.price }}</span>
+              </div>
+              <div class="text-xs text-gray-500 dark:text-gray-500">per day</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No categories message -->
+      <div *ngIf="pricingCategories().length === 0" class="text-center py-12">
+        <p class="text-gray-600 dark:text-gray-400">No pricing categories available.</p>
       </div>
     </div>
   </div>

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AppStore } from '../services/app.store';
 import { FooterNavComponent } from '../footer-nav/footer-nav.component';
 import { VehicleService } from '../services/vehicle.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-my-rentals',
@@ -25,7 +26,8 @@ export class MyRentalsComponent {
   constructor(
     private store: AppStore,
     private router: Router,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private authService: AuthService
   ) {
     this.activeRental = this.store.activeRental;
     this.isDarkMode = this.store.isDarkMode;
@@ -38,8 +40,13 @@ export class MyRentalsComponent {
     try {
       this.isLoading.set(true);
 
-      // TODO: Zamijeniti sa pravim user ID-em iz authentication
-      const userId = 1;
+      const userId = this.authService.getUserId();
+      if (!userId) {
+        console.error('User not authenticated');
+        this.isLoading.set(false);
+        this.router.navigate(['/welcome']);
+        return;
+      }
 
       const response = await this.vehicleService.getUserReservations({
         userId: userId,

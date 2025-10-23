@@ -147,4 +147,24 @@ export class VehicleService {
     });
     return this.http.get<any>('http://localhost:8090/v1/reservations', { params: cleanParams });
   }
+
+  // Pricing categories methods
+  getAllPricingCategories(): Observable<any[]> {
+    return this.http.get<any[]>('http://localhost:8090/v1/pricing-categories');
+  }
+
+  getActiveVehiclePricing(vehicleId: number): Observable<any> {
+    return this.http.get<any>(`http://localhost:8090/v1/vehicles/${vehicleId}/pricing/active`);
+  }
+
+  assignPricingToVehicle(vehicleId: number, pricingCategoryId: number): Observable<any> {
+    return this.http.post<any>(`http://localhost:8090/v1/vehicles/${vehicleId}/pricing`, {
+      vehicleId: vehicleId,
+      pricingCategoryId: pricingCategoryId
+    });
+  }
+
+  removePricingFromVehicle(vehicleId: number, pricingCategoryId: number): Observable<any> {
+    return this.http.delete<any>(`http://localhost:8090/v1/vehicles/${vehicleId}/pricing/${pricingCategoryId}`);
+  }
 }

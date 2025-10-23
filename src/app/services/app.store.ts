@@ -105,6 +105,14 @@ export class AppStore {
   private _darkMode = signal<boolean>(this.isDarkModePreferred());
   darkMode = this._darkMode.asReadonly();
 
+  // User ID state
+  private _userId = signal<number | null>(null);
+  userId = this._userId.asReadonly();
+
+  // User roles state
+  private _userRoles = signal<string[]>([]);
+  userRoles = this._userRoles.asReadonly();
+
   // User profile state
   private _userProfile = signal<UserProfile>({
     firstName: 'Jane',
@@ -361,5 +369,43 @@ export class AppStore {
   // Reservation methods
   setCurrentReservation(reservation: Reservation): void {
     this._currentReservation.set(reservation);
+  }
+
+  // User ID methods
+  setUserId(userId: number): void {
+    this._userId.set(userId);
+  }
+
+  clearUserId(): void {
+    this._userId.set(null);
+  }
+
+  getUserId(): number | null {
+    return this._userId();
+  }
+
+  // User roles methods
+  setUserRoles(roles: string[]): void {
+    this._userRoles.set(roles);
+  }
+
+  clearUserRoles(): void {
+    this._userRoles.set([]);
+  }
+
+  getUserRoles(): string[] {
+    return this._userRoles();
+  }
+
+  hasRole(role: string): boolean {
+    return this._userRoles().includes(role);
+  }
+
+  isAdmin(): boolean {
+    return this._userRoles().includes('admin');
+  }
+
+  isUser(): boolean {
+    return this._userRoles().includes('user');
   }
 }

@@ -32,14 +32,20 @@
 
     <!-- Login form -->
     <div class="w-full bg-white/90 dark:bg-background-dark/80 rounded-xl p-6 flex flex-col items-center shadow-lg backdrop-blur-sm">
+      <!-- Error message -->
+      <div *ngIf="errorMessage()" class="w-full mb-4 p-3 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-400 rounded-lg text-sm">
+        {{ errorMessage() }}
+      </div>
+
       <form class="w-full space-y-4" (ngSubmit)="onLogin()">
         <input
           class="w-full h-12 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
           [(ngModel)]="loginData.email"
           name="email"
-          placeholder="Email"
-          type="email"
+          placeholder="Username"
+          type="text"
           required
+          [disabled]="isLoading()"
         />
         <input
           class="w-full h-12 px-4 bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -48,11 +54,17 @@
           placeholder="Password"
           type="password"
           required
+          [disabled]="isLoading()"
         />
         <button
           type="submit"
-          class="w-full h-12 px-5 bg-primary text-white text-base font-bold rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors mt-6">
-          <span>Login</span>
+          [disabled]="isLoading()"
+          class="w-full h-12 px-5 bg-primary text-white text-base font-bold rounded-lg flex items-center justify-center shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isLoading()">Login</span>
+          <div *ngIf="isLoading()" class="flex items-center gap-2">
+            <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-solid border-white border-r-transparent"></div>
+            <span>Logging in...</span>
+          </div>
         </button>
       </form>
       <button

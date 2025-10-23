@@ -17,6 +17,14 @@
 
     <!-- Main content -->
     <main class="p-4 space-y-6">
+      <!-- Loading state -->
+      <div *ngIf="isLoading()" class="flex flex-col items-center justify-center py-12">
+        <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-primary border-r-transparent"></div>
+        <p class="mt-4 text-gray-600 dark:text-gray-400 text-center">Loading profile...</p>
+      </div>
+
+      <!-- Profile content - only show when not loading -->
+      <div *ngIf="!isLoading()">
       <!-- Profile Picture and Name Section -->
       <div class="flex flex-col items-center space-y-4">
         <div class="relative">
@@ -193,6 +201,8 @@
           </button>
         </div>
       </div>
+      </div>
+      <!-- End of profile content wrapper -->
     </main>
   </div>
 

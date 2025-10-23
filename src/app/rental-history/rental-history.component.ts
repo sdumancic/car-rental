@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ThemeService } from '../services/theme.service';
 import { FooterNavComponent } from '../footer-nav/footer-nav.component';
 import { VehicleService } from '../services/vehicle.service';
+import { AuthService } from '../services/auth.service';
 
 interface PastRental {
   id: number;
@@ -35,7 +36,8 @@ export class RentalHistoryComponent {
   constructor(
     public themeService: ThemeService,
     private router: Router,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private authService: AuthService
   ) {
     this.loadRentalHistory();
   }
@@ -44,8 +46,13 @@ export class RentalHistoryComponent {
     try {
       this.isLoading.set(true);
 
-      // TODO: Zamijeniti sa pravim user ID-em iz authentication
-      const userId = 1;
+      const userId = this.authService.getUserId();
+      if (!userId) {
+        console.error('User not authenticated');
+        this.isLoading.set(false);
+        this.router.navigate(['/welcome']);
+        return;
+      }
 
       const response = await this.vehicleService.getRentalHistory({
         userId: userId,

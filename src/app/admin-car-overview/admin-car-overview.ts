@@ -6,6 +6,7 @@ import { ThemeService } from '../services/theme.service';
 import { AppStore } from '../services/app.store';
 import { MetadataService } from '../services/metadata.service';
 import { VehicleService } from '../services/vehicle.service';
+import { AuthService } from '../services/auth.service';
 
 interface Vehicle {
   id: number;
@@ -78,7 +79,8 @@ export class AdminCarOverviewComponent implements OnInit {
     private location: Location,
     public appStore: AppStore,
     private metadataService: MetadataService,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private authService: AuthService
   ) {}
 
   async ngOnInit() {
@@ -203,8 +205,12 @@ export class AdminCarOverviewComponent implements OnInit {
     await this.performVehicleSearch();
   }
 
-  goBack() {
-    this.location.back();
+  onLogout() {
+    console.log('Logout clicked');
+    // Call AuthService to remove tokens and user data from storage
+    this.authService.logout();
+    // Redirect to welcome page
+    this.router.navigate(['/welcome']);
   }
 
   onAddVehicle() {

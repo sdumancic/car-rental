@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ThemeService } from '../services/theme.service';
 import { AppStore } from '../services/app.store';
 import { VehicleService } from '../services/vehicle.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-reservation-details',
@@ -108,7 +109,8 @@ export class ReservationDetailsComponent {
     private location: Location,
     private route: ActivatedRoute,
     private store: AppStore,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private authService: AuthService
   ) {
     // Check if we have a reservation ID from route
     this.reservationId = this.route.snapshot.paramMap.get('id');
@@ -126,10 +128,16 @@ export class ReservationDetailsComponent {
 
   async loadExistingReservation(reservationId: number) {
     try {
+      const userId = this.authService.getUserId();
+      if (!userId) {
+        this.errorMessage.set('User not authenticated');
+        return;
+      }
+
       // TODO: Add method to get single reservation by ID
       // For now, we can get all user reservations and filter
       const response = await this.vehicleService.getUserReservations({
-        userId: 1, // TODO: Get from auth
+        userId: userId,
         page: 0,
         size: 100
       }).toPromise();
@@ -325,6 +333,13 @@ export class ReservationDetailsComponent {
       return;
     }
 
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      alert('User not authenticated. Please log in again.');
+      this.router.navigate(['/welcome']);
+      return;
+    }
+
     // Resetiram error poruku prije novog pokušaja
     this.errorMessage.set(null);
 
@@ -334,7 +349,7 @@ export class ReservationDetailsComponent {
       const endDateISO = new Date(this.endDate() + 'T00:00:00.000Z').toISOString();
 
       const reservationData = {
-        userId: 1, // TODO: Zamijeniti sa pravim user ID-em iz authentication
+        userId: userId,
         vehicleId: this.vehicleId,
         startDate: startDateISO,
         endDate: endDateISO

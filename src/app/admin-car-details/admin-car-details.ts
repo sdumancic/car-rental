@@ -36,7 +36,7 @@ interface EquipmentItem {
 })
 export class AdminCarDetailsComponent {
   // Active tab
-  activeTab = signal<'details' | 'equipment' | 'media'>('details');
+  activeTab = signal<'details' | 'equipment' | 'media' | 'pricing'>('details');
 
   // Current image index for carousel
   currentImageIndex = signal(0);
@@ -45,6 +45,11 @@ export class AdminCarDetailsComponent {
   vehicleDetails = signal<VehicleDetails | null>(null);
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
+
+  // Pricing data
+  pricingCategories = signal<any[]>([]);
+  activePricingCategory = signal<any>(null);
+  isPricingLoading = signal<boolean>(false);
 
   // Equipment items
   equipment = signal<EquipmentItem[]>([
@@ -288,13 +293,16 @@ export class AdminCarDetailsComponent {
     this.location.back();
   }
 
-  setActiveTab(tab: 'details' | 'equipment' | 'media') {
+  setActiveTab(tab: 'details' | 'equipment' | 'media' | 'pricing') {
     this.activeTab.set(tab);
     if (tab === 'media') {
       this.loadVehicleMedia();
     }
     if (tab === 'details') {
       this.loadVehicleImages();
+    }
+    if (tab === 'pricing') {
+      this.loadPricingData();
     }
   }
 
@@ -446,5 +454,58 @@ export class AdminCarDetailsComponent {
         this.vehicleDetails.set({ ...details, images: imageUrls });
       }
     });
+  }
+
+  async loadPricingData() {
+    this.isPricingLoading.set(true);
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+
+    try {
+      // Load all pricing categories
+      const categories = await this.vehicleService.getAllPricingCategories().toPromise();
+      this.pricingCategories.set(categories || []);
+
+      // Load active pricing for this vehicle
+      try {
+        const activeCategory = await this.vehicleService.getActiveVehiclePricing(vehicleId).toPromise();
+        this.activePricingCategory.set(activeCategory);
+      } catch (error) {
+        // Vehicle might not have active pricing yet
+        console.log('No active pricing found for vehicle:', error);
+        this.activePricingCategory.set(null);
+      }
+    } catch (error) {
+      console.error('Failed to load pricing data:', error);
+      alert('Failed to load pricing data.');
+    } finally {
+      this.isPricingLoading.set(false);
+    }
+  }
+
+  isActivePricingCategory(categoryId: number): boolean {
+    const active = this.activePricingCategory();
+    return active?.pricingCategory?.id === categoryId;
+  }
+
+  async onPricingCategoryChange(newCategoryId: number) {
+    const vehicleId = Number(this.route.snapshot.paramMap.get('id'));
+    const currentActive = this.activePricingCategory();
+
+    try {
+      // If there's a current active pricing, remove it first using the pricing ID (not category ID)
+      if (currentActive?.id) {
+        // Use the pricing relation ID from the active pricing response
+        await this.vehicleService.removePricingFromVehicle(vehicleId, currentActive.id).toPromise();
+      }
+
+      // Assign new pricing category
+      await this.vehicleService.assignPricingToVehicle(vehicleId, newCategoryId).toPromise();
+
+      // Reload pricing data to reflect changes
+      await this.loadPricingData();
+    } catch (error) {
+      console.error('Failed to update pricing category:', error);
+      alert('Failed to update pricing category. Please try again.');
+    }
   }
 }
