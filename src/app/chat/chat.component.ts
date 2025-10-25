@@ -54,6 +54,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.messages.push(message);
       this.shouldScrollToBottom = true;
       this.cdr.detectChanges();
+      // Ensure scroll happens after view update
+      this.scrollToBottom();
     });
 
     // Connect to WebSocket
@@ -79,6 +81,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.chatService.sendMessage(this.newMessage.trim());
       this.newMessage = '';
       this.shouldScrollToBottom = true;
+      // Scroll immediately after sending
+      this.scrollToBottom();
     } else {
       console.log('Cannot send message. Status:', this.connectionStatus, 'Message:', this.newMessage.trim());
       this.debugConnection();
@@ -103,9 +107,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private scrollToBottom(): void {
     try {
-      if (this.messagesContainer) {
-        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
-      }
+      // Use setTimeout to ensure DOM is updated before scrolling
+      setTimeout(() => {
+        if (this.messagesContainer && this.messagesContainer.nativeElement) {
+          const element = this.messagesContainer.nativeElement;
+          element.scrollTop = element.scrollHeight;
+          // Alternative smooth scroll (uncomment if you prefer smooth animation):
+          // element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+        }
+      }, 0);
     } catch (err) {
       console.error('Scroll to bottom failed:', err);
     }
