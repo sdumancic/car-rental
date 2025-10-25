@@ -57,6 +57,11 @@ export const routes: Routes = [
     canActivate: [userAuthGuard]
   },
   {
+    path: 'chat',
+    loadComponent: () => import('./chat/chat.component').then(m => m.ChatComponent),
+    canActivate: [userAuthGuard]
+  },
+  {
     path: 'admin-car-overview',
     loadComponent: () => import('./admin-car-overview/admin-car-overview').then(m => m.AdminCarOverviewComponent),
     canActivate: [adminAuthGuard]

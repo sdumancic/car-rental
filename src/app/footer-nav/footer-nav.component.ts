@@ -26,6 +26,10 @@ export class FooterNavComponent {
     this.router.navigate(['/my-rentals']);
   }
 
+  navigateToChat() {
+    this.router.navigate(['/chat']);
+  }
+
   navigateToProfile() {
     this.router.navigate(['/profile']);
   }

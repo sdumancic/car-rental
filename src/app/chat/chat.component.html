@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-background-light dark:bg-background-dark flex flex-col">
+  <!-- Header -->
+  <div class="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-sm">
+    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <button
+        (click)="goBack()"
+        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <div class="flex-1 text-center">
+        <h1 class="text-lg font-semibold text-gray-900 dark:text-white">Customer Support</h1>
+        <p class="text-xs" [ngClass]="getConnectionStatusClass()">
+          {{ getConnectionStatusText() }}
+        </p>
+      </div>
+      <div class="w-10"></div>
+    </div>
+  </div>
+
+  <!-- Messages Container -->
+  <div
+    #messagesContainer
+    class="flex-1 overflow-y-auto p-4 space-y-4 pb-24">
+
+    <!-- Welcome Message -->
+    <div *ngIf="messages.length === 0" class="flex justify-center items-center h-full">
+      <div class="text-center text-gray-500 dark:text-gray-400">
+        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83.18,208H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0ZM216,192H80a8,8,0,0,0-5.23,1.95L40,224V64H216Z"></path>
+        </svg>
+        <p class="text-sm">Start a conversation with our support team</p>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div *ngFor="let message of messages"
+         [ngClass]="message.sender === 'user' ? 'flex justify-end' : 'flex justify-start'">
+      <div [ngClass]="message.sender === 'user'
+                      ? 'bg-primary text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'"
+           class="max-w-[75%] rounded-2xl px-4 py-2 shadow-sm">
+        <p class="text-sm break-words">{{ message.content }}</p>
+        <p class="text-xs mt-1 opacity-70">
+          {{ message.timestamp | date:'shortTime' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
+    <div class="flex items-end gap-2 max-w-4xl mx-auto">
+      <textarea
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        [disabled]="connectionStatus !== 'connected'"
+        placeholder="Type a message..."
+        rows="1"
+        class="flex-1 resize-none rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        style="max-height: 120px; overflow-y: auto;"></textarea>
+
+      <button
+        (click)="sendMessage()"
+        [disabled]="!newMessage.trim() || connectionStatus !== 'connected'"
+        class="p-3 rounded-full bg-primary text-white hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
+          <path d="M231.87,114l-168-95.89A16,16,0,0,0,40.92,37.34L71.55,128,40.92,218.67A16,16,0,0,0,56,240a16.15,16.15,0,0,0,7.93-2.1l167.92-96.05a16,16,0,0,0,.05-27.89ZM56,224a.56.56,0,0,0,0-.12L85.74,136H144a8,8,0,0,0,0-16H85.74L56.06,32.16A.46.46,0,0,0,56,32l168,95.83Z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Connection Warning -->
+    <div *ngIf="connectionStatus !== 'connected'" class="mt-2 text-center">
+      <p class="text-xs" [ngClass]="getConnectionStatusClass()">
+        <span *ngIf="connectionStatus === 'connecting'">Connecting to support...</span>
+        <span *ngIf="connectionStatus === 'disconnected'">Connection lost. Please refresh the page.</span>
+      </p>
+    </div>
+  </div>
+</div>
+
