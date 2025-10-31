@@ -29,6 +29,14 @@ export class CarSearchComponent {
   startDate: string = '';
   endDate: string = '';
 
+  get startDateDisplay(): string {
+    return this.formatDateForDisplay(this.startDate);
+  }
+
+  get endDateDisplay(): string {
+    return this.formatDateForDisplay(this.endDate);
+  }
+
   // Loading state
   isLoading = signal<boolean>(false);
 
@@ -51,6 +59,7 @@ export class CarSearchComponent {
     oneWeekLater.setDate(oneWeekLater.getDate() + 8); // Tomorrow + 7 days
     this.startDate = tomorrow.toISOString().slice(0, 10);
     this.endDate = oneWeekLater.toISOString().slice(0, 10);
+
     // Load vehicle types
     this.loadMetadata();
     // Perform initial search
@@ -220,5 +229,33 @@ export class CarSearchComponent {
     });
     // Navigiram na stranicu rezervacije
     this.router.navigate(['/reservation-details']);
+  }
+
+  // Helper method to format date as DD.MM.YYYY
+  formatDateForDisplay(isoDate: string): string {
+    if (!isoDate) return '';
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+
+  // Helper method to parse DD.MM.YYYY back to YYYY-MM-DD
+  parseDateFromDisplay(displayDate: string): string {
+    if (!displayDate) return '';
+    const parts = displayDate.split('.');
+    if (parts.length !== 3) return '';
+    const [day, month, year] = parts;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+
+  // Properties for displaying formatted dates
+  get startDateFormatted(): string {
+    return this.formatDateForDisplay(this.startDate);
+  }
+
+  get endDateFormatted(): string {
+    return this.formatDateForDisplay(this.endDate);
   }
 }

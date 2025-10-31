@@ -38,6 +38,15 @@ export class ReservationDetailsComponent {
   startDate = signal('');
   endDate = signal('');
 
+  // Getter properties for formatted date display (DD.MM.YYYY)
+  get startDateDisplay(): string {
+    return this.formatDateForDisplay(this.startDate());
+  }
+
+  get endDateDisplay(): string {
+    return this.formatDateForDisplay(this.endDate());
+  }
+
   // Calculated pricing from API
   calculatedPrice = signal<number | null>(null);
 
@@ -394,11 +403,33 @@ export class ReservationDetailsComponent {
     this.currentImageIndex.set(index);
   }
 
+  previousImage() {
+    const currentIndex = this.currentImageIndex();
+    const newIndex = currentIndex === 0 ? this.carDetails.images.length - 1 : currentIndex - 1;
+    this.currentImageIndex.set(newIndex);
+  }
+
+  nextImage() {
+    const currentIndex = this.currentImageIndex();
+    const newIndex = currentIndex === this.carDetails.images.length - 1 ? 0 : currentIndex + 1;
+    this.currentImageIndex.set(newIndex);
+  }
+
   toggleDarkMode() {
     this.themeService.toggleDarkMode();
   }
 
   isDarkMode() {
     return this.isDarkModeActive();
+  }
+
+  // Helper method to format date as DD.MM.YYYY
+  formatDateForDisplay(isoDate: string): string {
+    if (!isoDate) return '';
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   }
 }

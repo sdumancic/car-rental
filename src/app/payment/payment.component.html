@@ -20,20 +20,18 @@
       <!-- Payment Method Section -->
       <section>
         <h2 class="text-base font-bold mb-3">Payment Method</h2>
-        <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-3">
           <!-- Credit Card Option -->
           <label
-            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            class="flex flex-col items-center gap-2 rounded-lg border p-3 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
             [ngClass]="{
               'border-primary': paymentData().paymentMethod === 'credit-card',
               'ring-2': paymentData().paymentMethod === 'credit-card',
-              'ring-primary/20': paymentData().paymentMethod === 'credit-card'
+              'ring-primary/20': paymentData().paymentMethod === 'credit-card',
+              'bg-primary/5': paymentData().paymentMethod === 'credit-card'
             }">
-            <div class="flex-grow">
-              <p class="font-medium">Credit Card</p>
-            </div>
             <input
-              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              class="form-radio h-4 w-4 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
               type="radio"
               name="payment_method"
               value="credit-card"
@@ -41,48 +39,47 @@
               (change)="onPaymentMethodChange('credit-card')"
               checked
             />
+            <p class="font-medium text-sm text-center">Credit Card</p>
           </label>
 
           <!-- Debit Card Option -->
           <label
-            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            class="flex flex-col items-center gap-2 rounded-lg border p-3 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
             [ngClass]="{
               'border-primary': paymentData().paymentMethod === 'debit-card',
               'ring-2': paymentData().paymentMethod === 'debit-card',
-              'ring-primary/20': paymentData().paymentMethod === 'debit-card'
+              'ring-primary/20': paymentData().paymentMethod === 'debit-card',
+              'bg-primary/5': paymentData().paymentMethod === 'debit-card'
             }">
-            <div class="flex-grow">
-              <p class="font-medium">Debit Card</p>
-            </div>
             <input
-              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              class="form-radio h-4 w-4 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
               type="radio"
               name="payment_method"
               value="debit-card"
               [(ngModel)]="paymentData().paymentMethod"
               (change)="onPaymentMethodChange('debit-card')"
             />
+            <p class="font-medium text-sm text-center">Debit Card</p>
           </label>
 
           <!-- PayPal Option -->
           <label
-            class="flex items-center gap-4 rounded-lg border p-4 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
+            class="flex flex-col items-center gap-2 rounded-lg border p-3 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 transition-all"
             [ngClass]="{
               'border-primary': paymentData().paymentMethod === 'paypal',
               'ring-2': paymentData().paymentMethod === 'paypal',
-              'ring-primary/20': paymentData().paymentMethod === 'paypal'
+              'ring-primary/20': paymentData().paymentMethod === 'paypal',
+              'bg-primary/5': paymentData().paymentMethod === 'paypal'
             }">
-            <div class="flex-grow">
-              <p class="font-medium">Paypal</p>
-            </div>
             <input
-              class="form-radio h-5 w-5 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
+              class="form-radio h-4 w-4 border-gray-300 dark:border-gray-600 bg-transparent text-primary focus:ring-primary focus:ring-offset-0"
               type="radio"
               name="payment_method"
               value="paypal"
               [(ngModel)]="paymentData().paymentMethod"
               (change)="onPaymentMethodChange('paypal')"
             />
+            <p class="font-medium text-sm text-center">Paypal</p>
           </label>
         </div>
       </section>

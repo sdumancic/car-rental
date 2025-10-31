@@ -22,13 +22,39 @@
           <div>
             <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="start-date">Reservation starts</label>
             <div class="relative mt-2">
-              <input class="form-input" id="start-date" [(ngModel)]="startDate" name="startDate" type="date" />
+              <!-- Hidden native datepicker -->
+              <input
+                class="form-input opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                id="start-date"
+                [(ngModel)]="startDate"
+                name="startDate"
+                type="date" />
+              <!-- Visible formatted display -->
+              <div class="form-input flex items-center pointer-events-none">
+                <span class="flex-1">{{ startDateDisplay || 'DD.MM.YYYY' }}</span>
+                <svg class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
             </div>
           </div>
           <div>
             <label class="text-sm font-medium text-zinc-600 dark:text-zinc-400" for="end-date">Reservation ends</label>
             <div class="relative mt-2">
-              <input class="form-input" id="end-date" [(ngModel)]="endDate" name="endDate" type="date" />
+              <!-- Hidden native datepicker -->
+              <input
+                class="form-input opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                id="end-date"
+                [(ngModel)]="endDate"
+                name="endDate"
+                type="date" />
+              <!-- Visible formatted display -->
+              <div class="form-input flex items-center pointer-events-none">
+                <span class="flex-1">{{ endDateDisplay || 'DD.MM.YYYY' }}</span>
+                <svg class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
