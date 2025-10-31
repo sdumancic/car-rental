@@ -48,7 +48,7 @@ export class CarSearchComponent {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const oneWeekLater = new Date();
-    oneWeekLater.setDate(tomorrow.getDate() + 6);
+    oneWeekLater.setDate(oneWeekLater.getDate() + 8); // Tomorrow + 7 days
     this.startDate = tomorrow.toISOString().slice(0, 10);
     this.endDate = oneWeekLater.toISOString().slice(0, 10);
     // Load vehicle types
